@@ -6,8 +6,6 @@ namespace PSG.DeliveryService.Domain.Entities
 	{
 		public DateTime UserRegistrationTime { get; set; }
 
-		public string PreferredAdress { get; set; }
-
 		public List<Order> Orders { get; set; }
 	}
 }
