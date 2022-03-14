@@ -34,5 +34,13 @@ namespace PSG.DeliveryService.Domain.Entities
 		public int CustomerId { get; set; }
 
 		public ApplicationUser Customer { get; set; }
+
+		[ForeignKey("Courier")]
+		public int CourierId { get; set; }
+
+		public Courier Courier { get; set; }
+
+		
+		
 	}
 }
