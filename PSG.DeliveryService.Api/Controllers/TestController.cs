@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PSG.DeliveryService.Domain.Entities;
 
@@ -9,9 +10,11 @@ namespace PSG.DeliveryService.Api.Controllers
 	[Authorize]
 	public class UserController
 	{
-		public UserController()
-		{
+		private readonly UserManager<ApplicationUser> _userManager;
 
+		public UserController(UserManager<ApplicationUser> userManager)
+		{
+			_userManager = userManager;
 		}
 
 		[AllowAnonymous]
@@ -38,6 +41,5 @@ namespace PSG.DeliveryService.Api.Controllers
 			order.OrderTime = DateTime.Now;
 			return order;
 		}
-
 	}
 }

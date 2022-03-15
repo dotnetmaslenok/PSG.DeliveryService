@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using PSG.DeliveryService.Domain.Enums;
 
 namespace PSG.DeliveryService.Domain.Entities
 {
@@ -16,31 +15,22 @@ namespace PSG.DeliveryService.Domain.Entities
 
 		public decimal DeliveryPrice { get; set; }
 
-		public string DeliveryAddress { get; set; }
+		public string? DeliveryAddress { get; set; }
 
-		public string ProductAddress { get; set; }
+		public string? ProductAddress { get; set; }
 
 		public decimal OrderWeight { get; set; }
 
-		public enum DeliveryType
-		{
-			[Description("On foot")]
-			OnFoot,
-			Car,
-			Truck
-		}
-
+		public DeliveryType DeliveryType { get; set; }
+		
 		[ForeignKey("Customer")]
 		public int CustomerId { get; set; }
 
-		public ApplicationUser Customer { get; set; }
+		public ApplicationUser? Customer { get; set; }
 
 		[ForeignKey("Courier")]
 		public int CourierId { get; set; }
 
-		public Courier Courier { get; set; }
-
-		
-		
+		public Courier? Courier { get; set; }
 	}
 }

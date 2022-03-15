@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace PSG.DeliveryService.Domain.Entities;
 
 public class Courier : IdentityUser<int>
 {
-    public string PassportSN { get; set; }
+    [ForeignKey("PassportCredentials")]
+    public int PassportId { get; set; }
 
-    public string PassportCredentials { get; set; }
-
-    public List<Order> Orders { get; set; }
+    public PassportCredentials? PassportCredentials { get; set; }
+    
+    public List<Order>? Orders { get; set; }
 }
