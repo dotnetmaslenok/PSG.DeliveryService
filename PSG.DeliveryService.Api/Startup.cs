@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using PSG.DeliveryService.Domain.Authorization;
 using PSG.DeliveryService.Domain.Entities;
 using PSG.DeliveryService.Infrastructure.Database;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using PSG.DeliveryService.Domain.Authorization;
 
 namespace PSG.DeliveryService.Api;
 
@@ -30,20 +31,28 @@ public class Startup
             });
 
             services.AddDbContext<ApplicationDbContext>(config =>
-                {
-                    config.UseSqlServer(Configuration.GetConnectionString("DeliveryService"));
-                })
-                .AddIdentity<ApplicationUser, ApplicationRole>(config =>
-                {
-                    config.Password.RequireDigit = true;
-                    config.Password.RequiredLength = 8;
-                    config.Password.RequireLowercase = true;
-                    config.Password.RequireNonAlphanumeric = false;
-                    config.Password.RequireUppercase = true;
-                    config.Password.RequiredUniqueChars = 0;
-                })
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            {
+                config.UseSqlServer(Configuration.GetConnectionString("DeliveryService"));
+            });
+
+            Action<IdentityOptions> sharedIdentityConfig = (config) =>
+            {
+                config.Password.RequireDigit = true;
+                config.Password.RequiredLength = 8;
+                config.Password.RequireLowercase = true;
+                config.Password.RequireNonAlphanumeric = false;
+                config.Password.RequireUppercase = true;
+                config.Password.RequiredUniqueChars = 0;
+            };
             
+            services.AddIdentityCore<ApplicationUser>(sharedIdentityConfig)
+                .AddRoles<ApplicationRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddIdentityCore<Courier>(sharedIdentityConfig)
+                .AddRoles<ApplicationRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
             services.AddAuthorization(config =>
             {
                 config.AddPolicy("Administrator",
@@ -51,17 +60,17 @@ public class Startup
                     {
                         policy.RequireAssertion(x => x.User.HasClaim(ClaimTypes.Role, "Administrator"));
                     });
-            
+
                 config.AddPolicy("Courier",
                     policy => { policy.RequireAssertion(x => x.User.HasClaim(ClaimTypes.Role, "Courier")); });
-            
+
                 config.AddPolicy("Client",
                     policy => { policy.RequireAssertion(x => x.User.HasClaim(ClaimTypes.Role, "Client")); });
             });
-            
+
             services.ConfigureApplicationCookie(config =>
             {
-	            config.LoginPath = "/api/user/Login";
+                config.LoginPath = "/api/user/Login";
                 config.AccessDeniedPath = "/Account/AccessDenied";
             });
     }

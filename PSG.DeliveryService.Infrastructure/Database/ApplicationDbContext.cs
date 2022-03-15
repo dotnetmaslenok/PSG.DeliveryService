@@ -13,7 +13,11 @@ namespace PSG.DeliveryService.Infrastructure.Database
 		}
 
 		public DbSet<Order> Orders { get; set; }
+
 		public DbSet<Courier> Couriers { get; set; }
+
+		public DbSet<PassportCredentials> PassportCredentials { get; set; }
+
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
 			builder.Entity<Order>()

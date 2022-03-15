@@ -7,12 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Interfaces" />
-      <Folder Include="Services" />
-      <Folder Include="ViewModels" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\PSG.DeliveryService.Domain\PSG.DeliveryService.Domain.csproj" />
       <ProjectReference Include="..\PSG.DeliveryService.Infrastructure\PSG.DeliveryService.Infrastructure.csproj" />
     </ItemGroup>
