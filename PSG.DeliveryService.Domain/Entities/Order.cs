@@ -9,6 +9,10 @@ namespace PSG.DeliveryService.Domain.Entities
 		[Key]
 		public int Id { get; set; }
 
+		public string? ProductName { get; set; }
+
+		public OrderType OrderType { get; set; }
+
 		public DateTime OrderTime { get; set; }
 
 		public decimal ProductPrice { get; set; }
@@ -19,7 +23,7 @@ namespace PSG.DeliveryService.Domain.Entities
 
 		public string? ProductAddress { get; set; }
 
-		public decimal OrderWeight { get; set; }
+		public OrderWeight OrderWeight { get; set; }
 
 		public DeliveryType DeliveryType { get; set; }
 		

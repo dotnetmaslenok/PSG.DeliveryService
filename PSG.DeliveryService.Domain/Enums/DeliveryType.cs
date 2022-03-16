@@ -6,6 +6,6 @@ public enum DeliveryType
 {
     [Description("On foot")]
     OnFoot,
-    Car,
-    Truck
+    OnCar,
+    OnTruck
 }
