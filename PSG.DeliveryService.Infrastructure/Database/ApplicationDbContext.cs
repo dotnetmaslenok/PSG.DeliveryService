@@ -11,13 +11,9 @@ namespace PSG.DeliveryService.Infrastructure.Database
 		{
 
 		}
-
+		
 		public DbSet<Order> Orders { get; set; }
-
-		public DbSet<Courier> Couriers { get; set; }
-
-		public DbSet<PassportCredentials> PassportCredentials { get; set; }
-
+		
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
 			builder.Entity<Order>()
@@ -27,10 +23,18 @@ namespace PSG.DeliveryService.Infrastructure.Database
 			builder.Entity<Order>()
 				.Property(x => x.DeliveryPrice)
 				.HasPrecision(8, 2);
-			
+
 			builder.Entity<Order>()
-				.Property(x => x.OrderWeight)
-				.HasPrecision(8, 3);
+				.HasOne(m => m.Customer)
+				.WithMany(t => t.CustomerOrders)
+				.HasForeignKey(m => m.CustomerId)
+				.OnDelete(DeleteBehavior.Restrict);
+
+			builder.Entity<Order>()
+				.HasOne(m => m.Courier)
+				.WithMany(t => t.CourierOrders)
+				.HasForeignKey(m => m.CourierId)
+				.OnDelete(DeleteBehavior.Restrict);
 
 			base.OnModelCreating(builder);
 		}
