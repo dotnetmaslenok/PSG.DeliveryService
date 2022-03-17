@@ -1,4 +1,4 @@
-﻿namespace PSG.DeliveryService.Application.ViewModels;
+﻿namespace PSG.DeliveryService.Application.ViewModels.OrderViewModels;
 
 public class CreateOrderViewModel
 {

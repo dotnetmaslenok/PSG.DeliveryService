@@ -226,61 +226,6 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("PSG.DeliveryService.Domain.Entities.Courier", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Couriers");
-                });
-
             modelBuilder.Entity("PSG.DeliveryService.Domain.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -386,16 +331,16 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
 
             modelBuilder.Entity("PSG.DeliveryService.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("PSG.DeliveryService.Domain.Entities.Courier", "Courier")
-                        .WithMany("Orders")
+                    b.HasOne("PSG.DeliveryService.Domain.Entities.ApplicationUser", "Courier")
+                        .WithMany("CourierOrders")
                         .HasForeignKey("CourierId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("PSG.DeliveryService.Domain.Entities.ApplicationUser", "Customer")
-                        .WithMany("Orders")
+                        .WithMany("CustomerOrders")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Courier");
@@ -405,12 +350,9 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
 
             modelBuilder.Entity("PSG.DeliveryService.Domain.Entities.ApplicationUser", b =>
                 {
-                    b.Navigation("Orders");
-                });
+                    b.Navigation("CourierOrders");
 
-            modelBuilder.Entity("PSG.DeliveryService.Domain.Entities.Courier", b =>
-                {
-                    b.Navigation("Orders");
+                    b.Navigation("CustomerOrders");
                 });
 #pragma warning restore 612, 618
         }
