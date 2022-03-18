@@ -5,5 +5,7 @@ namespace PSG.DeliveryService.Application.ViewModels.AccountViewModels;
 public class SignUpViewModel : BaseAccountViewModel
 {
     public string UserName { get; set; }
+
+    public string ConfirmedPassword { get; set; }
     public bool IsCourier { get; set; }
 }

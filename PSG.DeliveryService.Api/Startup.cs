@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PSG.DeliveryService.Application.Interfaces;
 using PSG.DeliveryService.Application.Services;
@@ -7,6 +6,9 @@ using PSG.DeliveryService.Domain.Authorization;
 using PSG.DeliveryService.Domain.Entities;
 using PSG.DeliveryService.Infrastructure.Database;
 using System.Security.Claims;
+using FluentValidation.AspNetCore;
+using PSG.DeliveryService.Application.Profiles;
+using PSG.DeliveryService.Application.ViewModels.AccountViewModels;
 
 namespace PSG.DeliveryService.Api;
 
@@ -24,7 +26,14 @@ public class Startup
         services.AddControllers();
         services.AddEndpointsApiExplorer();
 
-        services.AddControllers();
+        services.AddControllers()
+            .AddFluentValidation(config =>
+            {
+                config.RegisterValidatorsFromAssemblyContaining<SignUpViewModel>();
+            });
+
+        services.AddAutoMapper(typeof(MappingProfile));
+            
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(config =>
         {
