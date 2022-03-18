@@ -2,6 +2,7 @@
 
 public class CreateOrderViewModel
 {
+    public string ClientId { get; set; }
     public string OrderType { get; set; }
     
     public string? OrderTime { get; set; }

@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PSG.DeliveryService.Application.ExceptionHandling;
@@ -15,16 +15,17 @@ public class AccountService : IAccountService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ApplicationDbContext _dbContext;
+    private readonly IMapper _mapper;
 
     public AccountService(UserManager<ApplicationUser> userManager,
-        
         SignInManager<ApplicationUser> signInManager,
-        
-        ApplicationDbContext dbContext)
+        ApplicationDbContext dbContext,
+        IMapper mapper)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _dbContext = dbContext;
+        _mapper = mapper;
     }
 
     private async Task<TResult> CreateUserAsync<TUser>(UserManager<TUser> userManager,
@@ -48,15 +49,16 @@ public class AccountService : IAccountService
 
     public async Task<TResult> SignUpAsync(SignUpViewModel signUpViewModel)
     {
+        var isAlreadyExists = await _dbContext.Users.AnyAsync(x => x.PhoneNumber == signUpViewModel.PhoneNumber);
+
+        if (isAlreadyExists)
+        {
+            return new TResult(false);
+        }
+        
         if (!signUpViewModel.IsCourier)
         {
-            var client = new ApplicationUser()
-            {
-                PhoneNumber = signUpViewModel.PhoneNumber,
-                UserName = signUpViewModel.UserName,
-                UserRegistrationTime = DateTime.Now,
-                PhoneNumberConfirmed = true
-            };
+            var client = _mapper.Map<SignUpViewModel, ApplicationUser>(signUpViewModel);
 
             var clientClaim = new Claim(ClaimTypes.Role, "Client");
             var result = await CreateUserAsync(_userManager,
@@ -69,13 +71,8 @@ public class AccountService : IAccountService
                 return result;
             }
         }
-        var courier = new ApplicationUser()
-        {
-            PhoneNumber = signUpViewModel.PhoneNumber,
-            UserName = signUpViewModel.UserName,
-            UserRegistrationTime = DateTime.Now,
-            PhoneNumberConfirmed = true
-        };
+        
+        var courier = _mapper.Map<SignUpViewModel, ApplicationUser>(signUpViewModel);
 
         var courierClaim = new Claim(ClaimTypes.Role, "Courier");
         return await CreateUserAsync(_userManager,
