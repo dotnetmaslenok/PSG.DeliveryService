@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PSG.DeliveryService.Api.Controllers;
 
@@ -7,9 +8,9 @@ namespace PSG.DeliveryService.Api.Controllers;
 public class TestController : ControllerBase
 {
     [HttpGet]
-    [Route("str")]
-    public string GetString()
+    [Authorize(Policy = "Client")]
+    public IActionResult GetString([FromQuery(Name = "s")] string content)
     {
-        return "Success";
+        return Ok(content);
     }
 }

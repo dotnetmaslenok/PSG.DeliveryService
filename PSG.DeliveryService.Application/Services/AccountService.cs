@@ -2,11 +2,12 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PSG.DeliveryService.Application.ExceptionHandling;
+using PSG.DeliveryService.Application.Common;
 using PSG.DeliveryService.Application.Interfaces;
 using PSG.DeliveryService.Application.ViewModels.AccountViewModels;
 using PSG.DeliveryService.Domain.Entities;
 using PSG.DeliveryService.Infrastructure.Database;
+using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Services;
 
@@ -16,7 +17,7 @@ public class AccountService : IAccountService
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
-
+    
     public AccountService(UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         ApplicationDbContext dbContext,
@@ -28,53 +29,53 @@ public class AccountService : IAccountService
         _mapper = mapper;
     }
 
-    private async Task<TResult> CreateUserAsync<TUser>(UserManager<TUser> userManager,
+    private async Task<ResultWithError<IEnumerable<IdentityError>>> CreateUserAsync<TUser>(UserManager<TUser> userManager,
         SignInManager<TUser> signInManager,
         TUser user,
         Claim userClaim,
         string? password) where TUser : IdentityUser<int>
     {
         var result = await userManager.CreateAsync(user, password);
-
+        
         if (result.Succeeded)
         {
             await userManager.AddClaimAsync(user, userClaim);
             await signInManager.PasswordSignInAsync(user, password, true, false);
 
-            return new TResult(true);
+            return ResultWithError.Ok<IEnumerable<IdentityError>>();
         }
 
-        return new TResult(false);
+        return ResultWithError.Fail<IEnumerable<IdentityError>>(result.Errors);
     }
 
-    public async Task<TResult> SignUpAsync(SignUpViewModel signUpViewModel)
+    public async Task<ResultWithError<IEnumerable<IdentityError>>> SignUpAsync(SignUpViewModel signUpViewModel)
     {
         var isAlreadyExists = await _dbContext.Users.AnyAsync(x => x.PhoneNumber == signUpViewModel.PhoneNumber);
 
         if (isAlreadyExists)
         {
-            return new TResult(false);
+            var phoneAlreadyExists = new IdentityError
+            {
+                Description = CustomConstants.ErrorMessages.PhoneAlreadyExistsMessage
+            };
+            
+            return ResultWithError.Fail<IEnumerable<IdentityError>>(new [] { phoneAlreadyExists });
         }
         
         if (!signUpViewModel.IsCourier)
         {
             var client = _mapper.Map<SignUpViewModel, ApplicationUser>(signUpViewModel);
 
-            var clientClaim = new Claim(ClaimTypes.Role, "Client");
-            var result = await CreateUserAsync(_userManager,
+            var clientClaim = new Claim(ClaimTypes.Role, CustomConstants.UserClaimValues.ClientClaimValue);
+            return await CreateUserAsync(_userManager,
                 _signInManager,
                 client, clientClaim,
                 signUpViewModel.Password);
-
-            if (result.Succeded)
-            {
-                return result;
-            }
         }
         
         var courier = _mapper.Map<SignUpViewModel, ApplicationUser>(signUpViewModel);
 
-        var courierClaim = new Claim(ClaimTypes.Role, "Courier");
+        var courierClaim = new Claim(ClaimTypes.Role, CustomConstants.UserClaimValues.CourierClaimValue);
         return await CreateUserAsync(_userManager,
             _signInManager,
             courier,
@@ -82,7 +83,7 @@ public class AccountService : IAccountService
             signUpViewModel.Password);
     }
 
-    public async Task<TResult> SignInAsync(SignInViewModel signUpViewModel)
+    public async Task<ResultWithError<string>> SignInAsync(SignInViewModel signUpViewModel)
     {
         var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.PhoneNumber == signUpViewModel.PhoneNumber);
 
@@ -92,17 +93,17 @@ public class AccountService : IAccountService
 
             if (result.Succeeded)
             {
-                return new TResult(true);
+                return ResultWithError.Ok<string>();
             }
         }
-        
-        return new TResult(false);
+
+        return ResultWithError.Fail<string>(CustomConstants.ErrorMessages.SignInError);
     }
 
-    public async Task<TResult> SignOutAsync()
+    public async Task<Result> SignOutAsync()
     {
         await _signInManager.SignOutAsync();
-
-        return new TResult(true);
+        
+        return Result.Ok();
     }
 }

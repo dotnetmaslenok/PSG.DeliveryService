@@ -13,7 +13,7 @@ namespace PSG.DeliveryService.Infrastructure.Database
 		}
 		
 		public DbSet<Order> Orders { get; set; }
-		
+
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
 			builder.Entity<Order>()

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using PSG.DeliveryService.Application.Validation.BaseValidators;
 using PSG.DeliveryService.Application.ViewModels.AccountViewModels;
 
 namespace PSG.DeliveryService.Application.Validation.AccountValidators;
@@ -7,9 +8,8 @@ public class SignUpViewModelValidator : AbstractValidator<SignUpViewModel>
 {
     public SignUpViewModelValidator()
     {
-        RuleFor(x => x.ConfirmedPassword).Equal(x => x.Password).NotEmpty().MaximumLength(30);
-        RuleFor(x => x.Password).NotEmpty().MaximumLength(255);
-        RuleFor(x => x.PhoneNumber).NotEmpty();
-        RuleFor(x => x.UserName).NotEmpty().MaximumLength(255);
+        RuleFor(x => x.UserName).MinimumLength(8).MaximumLength(31);
+        RuleFor(x => x.Password).SetValidator(new PasswordValidator<SignUpViewModel>()!);
+        RuleFor(x => x.ConfirmedPassword).Equal(x => x.Password);
     }
 }
