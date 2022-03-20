@@ -37,6 +37,8 @@ public class MappingProfile : Profile
             .ForMember(x => x.UserRegistrationTime,
                 opt => opt.MapFrom(x => DateTime.Now))
             .ForMember(x => x.PhoneNumber,
+                opt => opt.MapFrom(x => x.PhoneNumber))
+            .ForMember(x => x.PhoneNumberConfirmed,
                 opt => opt.MapFrom(x => true))
             .ForMember(x => x.IsCourier,
                 opt => opt.MapFrom(x => x.IsCourier))

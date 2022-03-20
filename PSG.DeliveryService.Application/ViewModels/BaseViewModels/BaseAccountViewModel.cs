@@ -4,10 +4,10 @@ namespace PSG.DeliveryService.Application.ViewModels.BaseViewModels;
 
 public class BaseAccountViewModel
 {
-    [Required]
+    [Required(ErrorMessage = "Phone number is required field")]
     [RegularExpression(@"^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$")]
     public string? PhoneNumber { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Password is required field")]
     public string? Password { get; set; }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PSG.DeliveryService.Application.Interfaces;
 using PSG.DeliveryService.Application.ViewModels.AccountViewModels;
 
@@ -17,40 +18,36 @@ public class AccountController : ControllerBase
 
     [HttpPost("sign-up")]
     public async Task<IActionResult> SignUpAsync(SignUpViewModel signUpViewModel)
-    {
+    { 
         var result = await _accountService.SignUpAsync(signUpViewModel);
 
-        if (result.Succeded)
+        if (result.IsSuccess)
         {
             return Ok();
         }
 
-        return BadRequest();
+        return BadRequest(result.Error);
     }
 
     [HttpPost("sign-in")]
     public async Task<IActionResult> SignInAsync(SignInViewModel signInViewModel)
     {
         var result = await _accountService.SignInAsync(signInViewModel);
-
-        if (result.Succeded)
+        
+        if (result.IsSuccess)
         {
-            return Ok();
+            return Ok();   
         }
 
-        return BadRequest();
+        return BadRequest(result.Error);
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> SignOutAsync()
     {
-        var result = await _accountService.SignOutAsync();
+        await _accountService.SignOutAsync();
 
-        if (result.Succeded)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        return Ok();
     }
 }

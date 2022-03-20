@@ -17,7 +17,10 @@ public class IdValidator<T> : PropertyValidator<T, string>
     {
         if (int.TryParse(value, out int id))
         {
-            return id > 0;
+            if (id > 0)
+            {
+                return true;
+            }
         }
 
         context.AddFailure(_fieldName, $"{_fieldName} must be greater then 0");

@@ -9,8 +9,9 @@ public class CreateOrderViewModelValidator : AbstractValidator<CreateOrderViewMo
     public CreateOrderViewModelValidator()
     {
         RuleFor(x => x.ClientId).SetValidator(new IdValidator<CreateOrderViewModel>("Client Id"));
-        RuleFor(x => x.To).MaximumLength(255).NotEmpty().NotEqual(x => x.From);
-        RuleFor(x => x.From).MaximumLength(255).NotEmpty();
-        RuleFor(x => x.ProductName).MaximumLength(255).NotEmpty();
+        RuleFor(x => x.To).MaximumLength(127).NotEqual(x => x.From);
+        RuleFor(x => x.From).MaximumLength(127);
+        RuleFor(x => x.OrderTime).SetValidator(new OrderTimeValidator<CreateOrderViewModel>()!);
+        RuleFor(x => x.ProductName).MaximumLength(63);
     }
 }

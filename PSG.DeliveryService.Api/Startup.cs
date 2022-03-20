@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Net;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PSG.DeliveryService.Application.Interfaces;
 using PSG.DeliveryService.Application.Services;
@@ -7,6 +8,7 @@ using PSG.DeliveryService.Domain.Entities;
 using PSG.DeliveryService.Infrastructure.Database;
 using System.Security.Claims;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using PSG.DeliveryService.Application.Profiles;
 using PSG.DeliveryService.Application.ViewModels.AccountViewModels;
 
@@ -83,6 +85,20 @@ public class Startup
         {
             config.LoginPath = "/api/account/sign-in";
             config.AccessDeniedPath = "/api/account/accessDenied";
+            config.Events = new CookieAuthenticationEvents
+            {
+                OnRedirectToLogin = context =>
+                {
+                    if (context.Request.Method != "GET")
+                    {
+                        context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                        return Task.CompletedTask;
+                    }
+
+                    context.RedirectUri = context.Options.LoginPath;
+                    return Task.CompletedTask;
+                }
+            };
         });
 
         services.AddHttpContextAccessor();

@@ -1,13 +1,14 @@
-﻿using PSG.DeliveryService.Application.ExceptionHandling;
+﻿using Microsoft.AspNetCore.Identity;
 using PSG.DeliveryService.Application.ViewModels.AccountViewModels;
+using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Interfaces;
 
 public interface IAccountService
 {
-    public Task<TResult> SignInAsync(SignInViewModel signInViewModel);
+    public Task<ResultWithError<string>> SignInAsync(SignInViewModel signInViewModel);
 
-    public Task<TResult> SignUpAsync(SignUpViewModel signUpViewModel);
+    public Task<ResultWithError<IEnumerable<IdentityError>>> SignUpAsync(SignUpViewModel signUpViewModel);
 
-    public Task<TResult> SignOutAsync();
+    public Task<Result> SignOutAsync();
 }
