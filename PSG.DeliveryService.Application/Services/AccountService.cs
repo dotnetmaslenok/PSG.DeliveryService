@@ -2,12 +2,14 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PSG.DeliveryService.Application.Common;
+using Microsoft.Extensions.Configuration;
+using PSG.DeliveryService.Application.Authentication;
 using PSG.DeliveryService.Application.Interfaces;
 using PSG.DeliveryService.Application.ViewModels.AccountViewModels;
 using PSG.DeliveryService.Domain.Entities;
 using PSG.DeliveryService.Infrastructure.Database;
 using ResultMonad;
+using static PSG.DeliveryService.Application.Common.CustomConstants;
 
 namespace PSG.DeliveryService.Application.Services;
 
@@ -17,19 +19,22 @@ public class AccountService : IAccountService
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
-    
+    private readonly IConfiguration _configuration;
+
     public AccountService(UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         ApplicationDbContext dbContext,
-        IMapper mapper)
+        IMapper mapper,
+        IConfiguration configuration)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _dbContext = dbContext;
         _mapper = mapper;
+        _configuration = configuration;
     }
 
-    private async Task<ResultWithError<IEnumerable<IdentityError>>> CreateUserAsync<TUser>(UserManager<TUser> userManager,
+    private async Task<Result<string, IEnumerable<IdentityError>>> CreateUserAsync<TUser>(UserManager<TUser> userManager,
         SignInManager<TUser> signInManager,
         TUser user,
         Claim userClaim,
@@ -40,15 +45,28 @@ public class AccountService : IAccountService
         if (result.Succeeded)
         {
             await userManager.AddClaimAsync(user, userClaim);
-            await signInManager.PasswordSignInAsync(user, password, true, false);
+            
+            var signInResult = await signInManager.PasswordSignInAsync(user, password, true, false);
 
-            return ResultWithError.Ok<IEnumerable<IdentityError>>();
+            if (signInResult.Succeeded)
+            {
+                var token = AuthenticationHelper.SetBearerToken(user, new[] {userClaim}, _configuration);
+                
+                return Result.Ok<string, IEnumerable<IdentityError>>(token);  
+            }
+
+            var identityError = new IdentityError
+            {
+                Description = ErrorMessages.WrongPasswordMessage
+            };
+            
+            return Result.Fail<string, IEnumerable<IdentityError>>(new []{ identityError });
         }
 
-        return ResultWithError.Fail<IEnumerable<IdentityError>>(result.Errors);
+        return Result.Fail<string, IEnumerable<IdentityError>>(result.Errors);
     }
 
-    public async Task<ResultWithError<IEnumerable<IdentityError>>> SignUpAsync(SignUpViewModel signUpViewModel)
+    public async Task<Result<string, IEnumerable<IdentityError>>> SignUpAsync(SignUpViewModel signUpViewModel)
     {
         var isAlreadyExists = await _dbContext.Users.AnyAsync(x => x.PhoneNumber == signUpViewModel.PhoneNumber);
 
@@ -56,26 +74,27 @@ public class AccountService : IAccountService
         {
             var phoneAlreadyExists = new IdentityError
             {
-                Description = CustomConstants.ErrorMessages.PhoneAlreadyExistsMessage
+                Description = ErrorMessages.PhoneAlreadyExistsMessage
             };
             
-            return ResultWithError.Fail<IEnumerable<IdentityError>>(new [] { phoneAlreadyExists });
+            return Result.Fail<string, IEnumerable<IdentityError>>(new [] { phoneAlreadyExists });
         }
         
         if (!signUpViewModel.IsCourier)
         {
             var client = _mapper.Map<SignUpViewModel, ApplicationUser>(signUpViewModel);
 
-            var clientClaim = new Claim(ClaimTypes.Role, CustomConstants.UserClaimValues.ClientClaimValue);
+            var clientClaim = UserClaims.ClientClaim;
             return await CreateUserAsync(_userManager,
                 _signInManager,
-                client, clientClaim,
+                client,
+                clientClaim,
                 signUpViewModel.Password);
         }
         
         var courier = _mapper.Map<SignUpViewModel, ApplicationUser>(signUpViewModel);
 
-        var courierClaim = new Claim(ClaimTypes.Role, CustomConstants.UserClaimValues.CourierClaimValue);
+        var courierClaim = UserClaims.CourierClaim;
         return await CreateUserAsync(_userManager,
             _signInManager,
             courier,
@@ -83,7 +102,7 @@ public class AccountService : IAccountService
             signUpViewModel.Password);
     }
 
-    public async Task<ResultWithError<string>> SignInAsync(SignInViewModel signUpViewModel)
+    public async Task<Result<string, string>> SignInAsync(SignInViewModel signUpViewModel)
     {
         var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.PhoneNumber == signUpViewModel.PhoneNumber);
 
@@ -93,11 +112,19 @@ public class AccountService : IAccountService
 
             if (result.Succeeded)
             {
-                return ResultWithError.Ok<string>();
-            }
-        }
+                var isClient = await _userManager.IsInRoleAsync(user, "Client");
+                
+                var token = isClient
+                    ? AuthenticationHelper.SetBearerToken(user, new[] {UserClaims.ClientClaim}, _configuration)
+                    : AuthenticationHelper.SetBearerToken(user, new[] {UserClaims.CourierClaim}, _configuration);
 
-        return ResultWithError.Fail<string>(CustomConstants.ErrorMessages.SignInError);
+                return Result.Ok<string, string>(token);
+            }
+            
+            return Result.Fail<string ,string>(ErrorMessages.WrongPasswordMessage);
+        }
+        
+        return Result.Fail<string, string>(ErrorMessages.WrongLoginMessage);
     }
 
     public async Task<Result> SignOutAsync()

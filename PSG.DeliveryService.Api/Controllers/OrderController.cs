@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PSG.DeliveryService.Application.Interfaces;
 using PSG.DeliveryService.Application.ViewModels.OrderViewModels;
 
 namespace PSG.DeliveryService.Api.Controllers;
 
-[ApiController]
+[ApiController, Authorize]
 [Route("api/order")]
 public class OrderController : ControllerBase
 {

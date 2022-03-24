@@ -23,9 +23,9 @@ public class AccountController : ControllerBase
 
         if (result.IsSuccess)
         {
-            return Ok();
+            return Ok(result.Value);
         }
-
+        
         return BadRequest(result.Error);
     }
 
@@ -36,13 +36,13 @@ public class AccountController : ControllerBase
         
         if (result.IsSuccess)
         {
-            return Ok();   
+            return Ok(result.Value);   
         }
 
         return BadRequest(result.Error);
     }
 
-    [HttpGet]
+    [HttpPost("sign-out")]
     [Authorize]
     public async Task<IActionResult> SignOutAsync()
     {

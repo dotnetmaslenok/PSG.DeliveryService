@@ -7,8 +7,12 @@ using PSG.DeliveryService.Domain.Authorization;
 using PSG.DeliveryService.Domain.Entities;
 using PSG.DeliveryService.Infrastructure.Database;
 using System.Security.Claims;
+using System.Text;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using PSG.DeliveryService.Application.Profiles;
 using PSG.DeliveryService.Application.ViewModels.AccountViewModels;
 
@@ -56,12 +60,40 @@ public class Startup
                 config.Password.RequireUppercase = true;
                 config.Password.RequiredUniqueChars = 0;
             })
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
-        services.AddAuthentication();
+        services.AddAuthentication(config =>
+            {
+                config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(config =>
+            {
+                var secretKey = Configuration["Authentication:Bearer:SecretKey"];
+                var secretBytes = Encoding.UTF8.GetBytes(secretKey);
+                var key = new SymmetricSecurityKey(secretBytes);
+                
+                config.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidIssuer = Configuration["Authentication:Bearer:Issuer"],
+                    ValidAudience = Configuration["Authentication:Bearer:Audience"],
+                    ValidateLifetime = true,
+                    IssuerSigningKey = key
+                };
+            });
 
         services.AddAuthorization(config =>
         {
+            config.AddPolicy("Bearer", policy =>
+            {
+                policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser()
+                    .Build();
+            });
+
             config.AddPolicy("Administrator",
                 policy =>
                 {

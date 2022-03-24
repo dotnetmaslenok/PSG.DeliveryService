@@ -6,9 +6,9 @@ namespace PSG.DeliveryService.Application.Interfaces;
 
 public interface IAccountService
 {
-    public Task<ResultWithError<string>> SignInAsync(SignInViewModel signInViewModel);
+    public Task<Result<string ,string>> SignInAsync(SignInViewModel signInViewModel);
 
-    public Task<ResultWithError<IEnumerable<IdentityError>>> SignUpAsync(SignUpViewModel signUpViewModel);
+    public Task<Result<string, IEnumerable<IdentityError>>> SignUpAsync(SignUpViewModel signUpViewModel);
 
     public Task<Result> SignOutAsync();
 }
