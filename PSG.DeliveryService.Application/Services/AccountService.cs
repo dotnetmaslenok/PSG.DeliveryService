@@ -112,11 +112,9 @@ public class AccountService : IAccountService
 
             if (result.Succeeded)
             {
-                var isClient = await _userManager.IsInRoleAsync(user, "Client");
-                
-                var token = isClient
-                    ? AuthenticationHelper.SetBearerToken(user, new[] {UserClaims.ClientClaim}, _configuration)
-                    : AuthenticationHelper.SetBearerToken(user, new[] {UserClaims.CourierClaim}, _configuration);
+                var token = user.IsCourier
+                    ? AuthenticationHelper.SetBearerToken(user, new[] {UserClaims.CourierClaim}, _configuration)
+                    : AuthenticationHelper.SetBearerToken(user, new[] {UserClaims.ClientClaim}, _configuration);
 
                 return Result.Ok<string, string>(token);
             }

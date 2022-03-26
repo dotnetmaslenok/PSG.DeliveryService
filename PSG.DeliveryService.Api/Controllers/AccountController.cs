@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PSG.DeliveryService.Application.Interfaces;
 using PSG.DeliveryService.Application.ViewModels.AccountViewModels;
@@ -17,33 +18,33 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("sign-up")]
-    public async Task<IActionResult> SignUpAsync(SignUpViewModel signUpViewModel)
+    public async Task<IActionResult> SignUpAsync([FromForm]SignUpViewModel signUpViewModel)
     { 
         var result = await _accountService.SignUpAsync(signUpViewModel);
 
         if (result.IsSuccess)
         {
-            return Ok(result.Value);
+            return Ok(Results.Json(result.Value));
         }
         
-        return BadRequest(result.Error);
+        return BadRequest(Results.Json(result.Error));
     }
 
     [HttpPost("sign-in")]
-    public async Task<IActionResult> SignInAsync(SignInViewModel signInViewModel)
+    public async Task<IActionResult> SignInAsync([FromForm]SignInViewModel signInViewModel)
     {
         var result = await _accountService.SignInAsync(signInViewModel);
         
         if (result.IsSuccess)
         {
-            return Ok(result.Value);   
+            return Ok(Results.Json(result.Value));
         }
 
-        return BadRequest(result.Error);
+        return BadRequest(Results.Json(result.Error));
     }
 
-    [HttpPost("sign-out")]
     [Authorize]
+    [HttpPost("sign-out")]
     public async Task<IActionResult> SignOutAsync()
     {
         await _accountService.SignOutAsync();
