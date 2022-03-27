@@ -11,6 +11,7 @@ using System.Text;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using PSG.DeliveryService.Application.Profiles;
@@ -66,14 +67,18 @@ public class Startup
         services.AddAuthentication(config =>
             {
                 config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
                 config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
+            .AddCookie(config => config.SlidingExpiration = true)
             .AddJwtBearer(config =>
             {
                 var secretKey = Configuration["Authentication:Bearer:SecretKey"];
                 var secretBytes = Encoding.UTF8.GetBytes(secretKey);
                 var key = new SymmetricSecurityKey(secretBytes);
-                
+
+                config.RequireHttpsMetadata = false;
+                config.SaveToken = true;
                 config.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = false,
@@ -159,8 +164,6 @@ public class Startup
             config.AllowAnyMethod();
             config.AllowAnyHeader();
         });
-
-        app.UseHttpsRedirection();
 
         app.UseAuthentication();
     

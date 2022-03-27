@@ -10,5 +10,5 @@ public interface IAccountService
 
     public Task<Result<string, IEnumerable<IdentityError>>> SignUpAsync(SignUpViewModel signUpViewModel);
 
-    public Task<Result> SignOutAsync();
+    public Task SignOutAsync();
 }

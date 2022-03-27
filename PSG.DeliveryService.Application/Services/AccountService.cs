@@ -112,9 +112,22 @@ public class AccountService : IAccountService
 
             if (result.Succeeded)
             {
-                var token = user.IsCourier
-                    ? AuthenticationHelper.SetBearerToken(user, new[] {UserClaims.CourierClaim}, _configuration)
-                    : AuthenticationHelper.SetBearerToken(user, new[] {UserClaims.ClientClaim}, _configuration);
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.MobilePhone, user.PhoneNumber)
+                };
+
+                if (user.IsCourier)
+                {
+                    claims.Add(UserClaims.CourierClaim);
+                }
+                else
+                {
+                    claims.Add(UserClaims.ClientClaim);
+                }
+
+                var token = AuthenticationHelper.SetBearerToken(user, claims, _configuration);
 
                 return Result.Ok<string, string>(token);
             }
@@ -125,10 +138,8 @@ public class AccountService : IAccountService
         return Result.Fail<string, string>(ErrorMessages.WrongLoginMessage);
     }
 
-    public async Task<Result> SignOutAsync()
+    public async Task SignOutAsync()
     {
         await _signInManager.SignOutAsync();
-        
-        return Result.Ok();
     }
 }

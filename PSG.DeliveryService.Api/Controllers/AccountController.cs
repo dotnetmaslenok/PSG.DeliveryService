@@ -49,6 +49,6 @@ public class AccountController : ControllerBase
     {
         await _accountService.SignOutAsync();
 
-        return Ok();
+        return NoContent();
     }
 }
