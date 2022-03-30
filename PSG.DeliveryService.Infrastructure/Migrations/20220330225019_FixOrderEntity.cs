@@ -4,23 +4,23 @@
 
 namespace PSG.DeliveryService.Infrastructure.Migrations
 {
-    public partial class AddIsCourierField : Migration
+    public partial class FixOrderEntity : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "IsCourier",
-                table: "AspNetUsers",
-                type: "bit",
+            migrationBuilder.AddColumn<int>(
+                name: "OrderState",
+                table: "Orders",
+                type: "int",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: 0);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "IsCourier",
-                table: "AspNetUsers");
+                name: "OrderState",
+                table: "Orders");
         }
     }
 }

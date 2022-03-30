@@ -1,27 +1,43 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PSG.DeliveryService.Application.Interfaces;
-using PSG.DeliveryService.Application.ViewModels.OrderViewModels;
+using PSG.DeliveryService.Application.Commands;
+using PSG.DeliveryService.Application.Responses;
 
 namespace PSG.DeliveryService.Api.Controllers;
 
-[ApiController, Authorize]
+[ApiController]
 [Route("api/order")]
 public class OrderController : ControllerBase
 {
-	private readonly IOrderService _orderService;
+	private readonly IMediator _mediator;
 
-	public OrderController(IOrderService orderService)
+	public OrderController(IMediator mediator)
 	{
-		_orderService = orderService;
+		_mediator = mediator;
+	}
+
+	[Authorize]
+	[HttpGet]
+	public async Task<IActionResult> GetOrderByIdAsync([FromQuery(Name = "o")] int orderId)
+	{
+		//TODO mediator query
+		var result = await _mediator.Send(orderId);
+		return Ok(Task.FromResult(new OrderResponse()).Result);
 	}
 	
+	[Authorize(Policy = "Client")]
 	[HttpPost]
-	public async Task<IActionResult> CreateOrder([FromForm] CreateOrderViewModel createOrderViewModel)
-	{
-		var orderId = await _orderService.CreateOrderAsync(createOrderViewModel);
-		
-	    //TODO: HOW?
-        return Created(new Uri("https://localhost:7147/api/order"), orderId);
-    }
+	public async Task<IActionResult> CreateOrder([FromForm] CreateOrderCommand createOrderCommand)
+	{ 
+		var result = await _mediator.Send(createOrderCommand);
+
+		if (result.IsSuccess)
+		{
+			var actionName = nameof(GetOrderByIdAsync);
+			return CreatedAtAction(actionName, new {Id = result.Value.ClientId}, result.Value);
+		}
+
+		return BadRequest(Results.Json(result.Error));
+	}
 }

@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using PSG.DeliveryService.Application.Authentication;
+using PSG.DeliveryService.Application.Commands;
 using PSG.DeliveryService.Application.Interfaces;
-using PSG.DeliveryService.Application.ViewModels.AccountViewModels;
 using PSG.DeliveryService.Domain.Entities;
 using PSG.DeliveryService.Infrastructure.Database;
 using ResultMonad;
@@ -38,7 +38,7 @@ public class AccountService : IAccountService
         SignInManager<TUser> signInManager,
         TUser user,
         Claim userClaim,
-        string? password) where TUser : IdentityUser<int>
+        string? password) where TUser : IdentityUser<Guid>
     {
         var result = await userManager.CreateAsync(user, password);
         
@@ -50,7 +50,7 @@ public class AccountService : IAccountService
 
             if (signInResult.Succeeded)
             {
-                var token = AuthenticationHelper.SetBearerToken(user, new[] {userClaim}, _configuration);
+                var token = BearerAuthentication.SetBearerToken(user, new[] {userClaim}, _configuration);
                 
                 return Result.Ok<string, IEnumerable<IdentityError>>(token);  
             }
@@ -66,9 +66,9 @@ public class AccountService : IAccountService
         return Result.Fail<string, IEnumerable<IdentityError>>(result.Errors);
     }
 
-    public async Task<Result<string, IEnumerable<IdentityError>>> SignUpAsync(SignUpViewModel signUpViewModel)
+    public async Task<Result<string, IEnumerable<IdentityError>>> CreateAsync(RegistrationCommand registrationCommand)
     {
-        var isAlreadyExists = await _dbContext.Users.AnyAsync(x => x.PhoneNumber == signUpViewModel.PhoneNumber);
+        var isAlreadyExists = await _dbContext.Users.AnyAsync(x => x.PhoneNumber == registrationCommand.PhoneNumber);
 
         if (isAlreadyExists)
         {
@@ -80,35 +80,35 @@ public class AccountService : IAccountService
             return Result.Fail<string, IEnumerable<IdentityError>>(new [] { phoneAlreadyExists });
         }
         
-        if (!signUpViewModel.IsCourier)
+        if (!registrationCommand.IsCourier)
         {
-            var client = _mapper.Map<SignUpViewModel, ApplicationUser>(signUpViewModel);
+            var client = _mapper.Map<RegistrationCommand, ApplicationUser>(registrationCommand);
 
             var clientClaim = UserClaims.ClientClaim;
             return await CreateUserAsync(_userManager,
                 _signInManager,
                 client,
                 clientClaim,
-                signUpViewModel.Password);
+                registrationCommand.Password);
         }
         
-        var courier = _mapper.Map<SignUpViewModel, ApplicationUser>(signUpViewModel);
+        var courier = _mapper.Map<RegistrationCommand, ApplicationUser>(registrationCommand);
 
         var courierClaim = UserClaims.CourierClaim;
         return await CreateUserAsync(_userManager,
             _signInManager,
             courier,
             courierClaim,
-            signUpViewModel.Password);
+            registrationCommand.Password);
     }
 
-    public async Task<Result<string, string>> SignInAsync(SignInViewModel signUpViewModel)
+    public async Task<Result<string, string>> SignInAsync(SignInCommand signUpCommand)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.PhoneNumber == signUpViewModel.PhoneNumber);
+        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.PhoneNumber == signUpCommand.PhoneNumber);
 
         if (user is not null)
         {
-            var result = await _signInManager.PasswordSignInAsync(user, signUpViewModel.Password, true, false);
+            var result = await _signInManager.PasswordSignInAsync(user, signUpCommand.Password, true, false);
 
             if (result.Succeeded)
             {
@@ -118,16 +118,9 @@ public class AccountService : IAccountService
                     new Claim(ClaimTypes.MobilePhone, user.PhoneNumber)
                 };
 
-                if (user.IsCourier)
-                {
-                    claims.Add(UserClaims.CourierClaim);
-                }
-                else
-                {
-                    claims.Add(UserClaims.ClientClaim);
-                }
+                claims.Add(user.IsCourier ? UserClaims.CourierClaim : UserClaims.ClientClaim);
 
-                var token = AuthenticationHelper.SetBearerToken(user, claims, _configuration);
+                var token = BearerAuthentication.SetBearerToken(user, claims, _configuration);
 
                 return Result.Ok<string, string>(token);
             }

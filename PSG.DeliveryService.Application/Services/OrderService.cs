@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using PSG.DeliveryService.Application.Commands;
 using PSG.DeliveryService.Application.Interfaces;
-using PSG.DeliveryService.Application.ViewModels.OrderViewModels;
+using PSG.DeliveryService.Application.Responses;
 using PSG.DeliveryService.Domain.Entities;
 using PSG.DeliveryService.Infrastructure.Database;
+using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Services;
 
@@ -18,22 +20,33 @@ public class OrderService : IOrderService
         _mapper = mapper;
     }
     
-    public async Task<int> CreateOrderAsync(CreateOrderViewModel createOrderViewModel)
+    public async Task<Result<OrderResponse>> GetOrderByIdAsync(Guid orderId)
     {
-        int.TryParse(createOrderViewModel.ClientId, out int clientId);
+        var order = await _dbContext.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
 
-        var customer = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == clientId);
+        if (order is null)
+        {
+            return Result.Fail<OrderResponse>();
+        }
 
-        //TODO: Добавить логику распределения заказов между курьерами
-        var courier = await _dbContext.Users.LastAsync();
+        var orderResponse = _mapper.Map<OrderResponse>(order);
+        return Result.Ok(orderResponse);
+    }
+    
+    public async Task<Result<CreateOrderCommand, Exception>> CreateOrderAsync(CreateOrderCommand createOrderCommand)
+    {
+        var order = _mapper.Map<Order>(createOrderCommand);
 
-        var order = _mapper.Map<CreateOrderViewModel, Order>(createOrderViewModel);
-        order.Customer = customer!;
-        order.Courier = courier;
+        try
+        {
+            await _dbContext.Orders.AddAsync(order);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            return Result.Fail<CreateOrderCommand, Exception>(e);
+        }
 
-        await _dbContext.Orders.AddAsync(order);
-        await _dbContext.SaveChangesAsync();
-
-        return order.Id;
+        return Result.Ok<CreateOrderCommand, Exception>(createOrderCommand);
     }
 }

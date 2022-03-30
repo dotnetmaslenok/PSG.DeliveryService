@@ -7,13 +7,13 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace PSG.DeliveryService.Application.Authentication;
 
-public static class AuthenticationHelper
+public static class BearerAuthentication
 {
-    public static string SetBearerToken(IdentityUser<int> user, IEnumerable<Claim> claims, IConfiguration configuration)
+    public static string SetBearerToken(IdentityUser<Guid> user, IEnumerable<Claim> claims, IConfiguration configuration)
     {
         var issuer = configuration["Authentication:Bearer:Issuer"]; 
         var audience = configuration["Authentication:Bearer:Audience"];
-        var secretKey = configuration["Authentication:Bearer:SecretKey"];
+        var secretKey = configuration["BearerSalt"];
 
         var key = Encoding.UTF8.GetBytes(secretKey);
 

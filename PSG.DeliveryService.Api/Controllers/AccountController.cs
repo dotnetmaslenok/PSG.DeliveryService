@@ -1,8 +1,9 @@
-﻿using System.Net.Http.Headers;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PSG.DeliveryService.Application.Interfaces;
-using PSG.DeliveryService.Application.ViewModels.AccountViewModels;
+using PSG.DeliveryService.Application.Commands;
 
 namespace PSG.DeliveryService.Api.Controllers;
 
@@ -10,17 +11,17 @@ namespace PSG.DeliveryService.Api.Controllers;
 [Route("api/account")]
 public class AccountController : ControllerBase
 {
-    private readonly IAccountService _accountService;
+    private readonly IMediator _mediator;
 
-    public AccountController(IAccountService accountService)
+    public AccountController(IMediator mediator)
     {
-        _accountService = accountService;
+        _mediator = mediator;
     }
 
-    [HttpPost("sign-up")]
-    public async Task<IActionResult> SignUpAsync([FromForm]SignUpViewModel signUpViewModel)
+    [HttpPost]
+    public async Task<IActionResult> SignUpAsync([FromForm]RegistrationCommand registrationCommand)
     { 
-        var result = await _accountService.SignUpAsync(signUpViewModel);
+        var result = await _mediator.Send(registrationCommand);
 
         if (result.IsSuccess)
         {
@@ -31,9 +32,9 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("sign-in")]
-    public async Task<IActionResult> SignInAsync([FromForm]SignInViewModel signInViewModel)
+    public async Task<IActionResult> SignInAsync([FromForm]SignInCommand signInCommand)
     {
-        var result = await _accountService.SignInAsync(signInViewModel);
+        var result = await _mediator.Send(signInCommand);
         
         if (result.IsSuccess)
         {
@@ -47,7 +48,7 @@ public class AccountController : ControllerBase
     [HttpPost("sign-out")]
     public async Task<IActionResult> SignOutAsync()
     {
-        await _accountService.SignOutAsync();
+        await HttpContext.SignOutAsync(JwtBearerDefaults.AuthenticationScheme);
 
         return NoContent();
     }

@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-    </PropertyGroup>
+      <UserSecretsId>a70d72a2-4dec-46da-86f8-aaaa69ed340a</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />

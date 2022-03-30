@@ -1,17 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using MediatR;
+using ResultMonad;
 
-namespace PSG.DeliveryService.Application.ViewModels.OrderViewModels;
+namespace PSG.DeliveryService.Application.Commands;
 
-public class CreateOrderViewModel
+public class CreateOrderCommand : IRequest<Result<CreateOrderCommand, Exception>>
 {
     public string? ClientId { get; set; }
     [Required(ErrorMessage = "Fast or scheduled delivery?")]
     public string? OrderType { get; set; }
     
     public string? OrderTime { get; set; }
-    
-    public string? DeliveryType { get; set; }
-    
+
     [Required(ErrorMessage = "Specify the weight of the product")]
     public string? OrderWeight { get; set; }
 

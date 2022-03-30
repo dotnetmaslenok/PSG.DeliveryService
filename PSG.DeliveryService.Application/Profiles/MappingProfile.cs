@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using PSG.DeliveryService.Application.ViewModels.AccountViewModels;
-using PSG.DeliveryService.Application.ViewModels.OrderViewModels;
+using PSG.DeliveryService.Application.Commands;
 using PSG.DeliveryService.Domain.Entities;
 
 namespace PSG.DeliveryService.Application.Profiles;
@@ -9,8 +8,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        //TODO: Кондишны для маппинга DeliveryPrice и ProductPrice (формулы/константы)
-        CreateMap<CreateOrderViewModel, Order>()
+        CreateMap<CreateOrderCommand, Order>()
             .ForMember(x => x.OrderWeight,
                 opt =>
                 {
@@ -22,12 +20,6 @@ public class MappingProfile : Profile
                 {
                     opt.PreCondition(x => int.TryParse(x.OrderType, out _));
                     opt.MapFrom(x => int.Parse(x.OrderType!));
-                })
-            .ForMember(x => x.DeliveryType,
-                opt =>
-                {
-                    opt.PreCondition(x => int.TryParse(x.DeliveryType, out _));
-                    opt.MapFrom(x => int.Parse(x.DeliveryType!));
                 })
             .ForMember(x => x.OrderTime, opt =>
             {
@@ -42,7 +34,7 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(x => x.ProductName))
             .ForAllOtherMembers(opt => opt.Ignore());
 
-        CreateMap<SignUpViewModel, ApplicationUser>()
+        CreateMap<RegistrationCommand, ApplicationUser>()
             .ForMember(x => x.PhoneNumber,
                 opt => opt.MapFrom(x => x.PhoneNumber))
             .ForMember(x => x.UserName,
