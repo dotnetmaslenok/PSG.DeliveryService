@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PSG.DeliveryService.Infrastructure.Database;
 
@@ -11,9 +12,10 @@ using PSG.DeliveryService.Infrastructure.Database;
 namespace PSG.DeliveryService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220331182910_OrderDistanceAndPrice")]
+    partial class OrderDistanceAndPrice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -231,10 +233,10 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CourierId")
+                    b.Property<Guid>("CourierId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CustomerId")
+                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("DeliveryAddress")
@@ -333,12 +335,14 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
                     b.HasOne("PSG.DeliveryService.Domain.Entities.ApplicationUser", "Courier")
                         .WithMany("CourierOrders")
                         .HasForeignKey("CourierId")
-                        .OnDelete(DeleteBehavior.ClientCascade);
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
 
                     b.HasOne("PSG.DeliveryService.Domain.Entities.ApplicationUser", "Customer")
                         .WithMany("CustomerOrders")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.ClientCascade);
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
 
                     b.Navigation("Courier");
 

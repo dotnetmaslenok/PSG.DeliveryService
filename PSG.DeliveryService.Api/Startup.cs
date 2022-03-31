@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PSG.DeliveryService.Application.Interfaces;
@@ -7,7 +8,6 @@ using PSG.DeliveryService.Domain.Entities;
 using PSG.DeliveryService.Infrastructure.Database;
 using System.Security.Claims;
 using System.Text;
-using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -15,10 +15,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using PSG.DeliveryService.Application.Commands;
+using PSG.DeliveryService.Application.Common;
 using PSG.DeliveryService.Application.PipelineBehaviors;
 using PSG.DeliveryService.Application.Profiles;
-using PSG.DeliveryService.Application.Validation.AccountValidators;
-using PSG.DeliveryService.Application.Validation.BaseValidators;
 
 namespace PSG.DeliveryService.Api;
 
@@ -140,7 +139,11 @@ public class Startup
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IUserService, UserService>();
 
-        services.AddMediatR(typeof(RegistrationCommand).Assembly);
+        services.AddMediatR(typeof(ValidationBehavior<,>));
+        services.AddFluentValidation(config =>
+        {
+            config.RegisterValidatorsFromAssemblyContaining(typeof(ValidationBehavior<,>));
+        });
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         
         services.AddAutoMapper(typeof(MappingProfile));

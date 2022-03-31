@@ -1,10 +1,11 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using PSG.DeliveryService.Application.Authentication;
 using PSG.DeliveryService.Application.Commands;
+using PSG.DeliveryService.Application.Helpers;
 using PSG.DeliveryService.Application.Interfaces;
 using PSG.DeliveryService.Domain.Entities;
 using PSG.DeliveryService.Infrastructure.Database;
@@ -34,14 +35,14 @@ public class AccountService : IAccountService
         _configuration = configuration;
     }
 
-    private async Task<Result<string, IEnumerable<IdentityError>>> CreateUserAsync<TUser>(UserManager<TUser> userManager,
+    private async Task<Result<JsonResult, IEnumerable<IdentityError>>> CreateUserAsync<TUser>(UserManager<TUser> userManager,
         SignInManager<TUser> signInManager,
         TUser user,
         Claim userClaim,
         string? password) where TUser : IdentityUser<Guid>
     {
         var result = await userManager.CreateAsync(user, password);
-        
+
         if (result.Succeeded)
         {
             await userManager.AddClaimAsync(user, userClaim);
@@ -50,9 +51,16 @@ public class AccountService : IAccountService
 
             if (signInResult.Succeeded)
             {
-                var token = BearerAuthentication.SetBearerToken(user, new[] {userClaim}, _configuration);
+                var token = AuthenticationHelper.SetBearerToken(user, new[] {userClaim}, _configuration);
                 
-                return Result.Ok<string, IEnumerable<IdentityError>>(token);  
+                var userId = await _userManager.GetUserIdAsync((user as ApplicationUser)!);
+                var response = new
+                {
+                    access_token = token,
+                    currentUserId = userId
+                };
+                
+                return Result.Ok<JsonResult, IEnumerable<IdentityError>>(new JsonResult(response));  
             }
 
             var identityError = new IdentityError
@@ -60,13 +68,13 @@ public class AccountService : IAccountService
                 Description = ErrorMessages.WrongPasswordMessage
             };
             
-            return Result.Fail<string, IEnumerable<IdentityError>>(new []{ identityError });
+            return Result.Fail<JsonResult, IEnumerable<IdentityError>>(new []{ identityError });
         }
 
-        return Result.Fail<string, IEnumerable<IdentityError>>(result.Errors);
+        return Result.Fail<JsonResult, IEnumerable<IdentityError>>(result.Errors);
     }
 
-    public async Task<Result<string, IEnumerable<IdentityError>>> CreateAsync(RegistrationCommand registrationCommand)
+    public async Task<Result<JsonResult, IEnumerable<IdentityError>>> CreateAsync(RegistrationCommand registrationCommand)
     {
         var isAlreadyExists = await _dbContext.Users.AnyAsync(x => x.PhoneNumber == registrationCommand.PhoneNumber);
 
@@ -77,7 +85,7 @@ public class AccountService : IAccountService
                 Description = ErrorMessages.PhoneAlreadyExistsMessage
             };
             
-            return Result.Fail<string, IEnumerable<IdentityError>>(new [] { phoneAlreadyExists });
+            return Result.Fail<JsonResult, IEnumerable<IdentityError>>(new [] { phoneAlreadyExists });
         }
         
         if (!registrationCommand.IsCourier)
@@ -102,7 +110,7 @@ public class AccountService : IAccountService
             registrationCommand.Password);
     }
 
-    public async Task<Result<string, string>> SignInAsync(SignInCommand signUpCommand)
+    public async Task<Result<JsonResult, string>> SignInAsync(SignInCommand signUpCommand)
     {
         var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.PhoneNumber == signUpCommand.PhoneNumber);
 
@@ -120,15 +128,23 @@ public class AccountService : IAccountService
 
                 claims.Add(user.IsCourier ? UserClaims.CourierClaim : UserClaims.ClientClaim);
 
-                var token = BearerAuthentication.SetBearerToken(user, claims, _configuration);
+                var token = AuthenticationHelper.SetBearerToken(user, claims, _configuration);
+                
+                var userId = await _userManager.GetUserIdAsync(user);
+                var response = new
+                {
+                    access_token = token,
+                    currentUserId = userId
+                };
+                
 
-                return Result.Ok<string, string>(token);
+                return Result.Ok<JsonResult, string>(new JsonResult(response));
             }
             
-            return Result.Fail<string ,string>(ErrorMessages.WrongPasswordMessage);
+            return Result.Fail<JsonResult ,string>(ErrorMessages.WrongPasswordMessage);
         }
         
-        return Result.Fail<string, string>(ErrorMessages.WrongLoginMessage);
+        return Result.Fail<JsonResult, string>(ErrorMessages.WrongLoginMessage);
     }
 
     public async Task SignOutAsync()

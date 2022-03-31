@@ -14,5 +14,11 @@ namespace PSG.DeliveryService.Domain.Entities
 		public List<Order>? CourierOrders { get; set; }
 
 		public bool IsCourier { get; set; }
+
+		public ApplicationUser()
+		{
+			CustomerOrders = new List<Order>();
+			CourierOrders = new List<Order>();
+		}
 	}
 }

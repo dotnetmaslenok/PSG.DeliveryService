@@ -37,11 +37,7 @@ namespace PSG.DeliveryService.Infrastructure.Database
 				.OnDelete(DeleteBehavior.ClientCascade);
 
 			builder.Entity<Order>()
-				.Property(x => x.ProductPrice)
-				.HasPrecision(8, 2);
-			
-			builder.Entity<Order>()
-				.Property(x => x.DeliveryPrice)
+				.Property(x => x.TotalPrice)
 				.HasPrecision(8, 2);
 
 			base.OnModelCreating(builder);

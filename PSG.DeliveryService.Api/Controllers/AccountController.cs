@@ -25,27 +25,27 @@ public class AccountController : ControllerBase
 
         if (result.IsSuccess)
         {
-            return Ok(Results.Json(result.Value));
+            return Ok(result.Value);
         }
         
-        return BadRequest(Results.Json(result.Error));
+        return BadRequest(result.Error);
     }
 
     [HttpPost("sign-in")]
     public async Task<IActionResult> SignInAsync([FromForm]SignInCommand signInCommand)
     {
         var result = await _mediator.Send(signInCommand);
-        
+
         if (result.IsSuccess)
         {
-            return Ok(Results.Json(result.Value));
+            return Ok(result.Value);
         }
 
-        return BadRequest(Results.Json(result.Error));
+        return BadRequest(result.Error);
     }
-
-    [Authorize]
+    
     [HttpPost("sign-out")]
+    [Authorize]
     public async Task<IActionResult> SignOutAsync()
     {
         await HttpContext.SignOutAsync(JwtBearerDefaults.AuthenticationScheme);

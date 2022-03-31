@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PSG.DeliveryService.Application.Commands;
+using PSG.DeliveryService.Application.Helpers;
 using PSG.DeliveryService.Application.Interfaces;
+using PSG.DeliveryService.Application.Queries;
 using PSG.DeliveryService.Application.Responses;
 using PSG.DeliveryService.Domain.Entities;
 using PSG.DeliveryService.Infrastructure.Database;
@@ -20,9 +22,9 @@ public class OrderService : IOrderService
         _mapper = mapper;
     }
     
-    public async Task<Result<OrderResponse>> GetOrderByIdAsync(Guid orderId)
+    public async Task<Result<OrderResponse>> GetOrderByIdAsync(OrderQuery orderQuery)
     {
-        var order = await _dbContext.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+        var order = await _dbContext.Orders.FirstOrDefaultAsync(x => x.Id == orderQuery.Id);
 
         if (order is null)
         {
@@ -33,20 +35,29 @@ public class OrderService : IOrderService
         return Result.Ok(orderResponse);
     }
     
-    public async Task<Result<CreateOrderCommand, Exception>> CreateOrderAsync(CreateOrderCommand createOrderCommand)
+    public async Task<Result<CreateOrderCommand>> CreateOrderAsync(CreateOrderCommand createOrderCommand)
     {
+        var customer = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == createOrderCommand.ClientId);
+
+        if (customer is null)
+        {
+            return Result.Fail<CreateOrderCommand>();
+        }
+        
         var order = _mapper.Map<Order>(createOrderCommand);
+        order.Customer = customer;
+        customer.CustomerOrders.Add(order);
+        
+        var deliveryPrice = DeliveryPriceHelper.CalculateDeliveryPrice(order.OrderType, order.Distance, order.OrderWeight);
 
-        try
+        if (deliveryPrice.HasValue)
         {
-            await _dbContext.Orders.AddAsync(order);
-            await _dbContext.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            return Result.Fail<CreateOrderCommand, Exception>(e);
+            order.TotalPrice = deliveryPrice.Value;
         }
 
-        return Result.Ok<CreateOrderCommand, Exception>(createOrderCommand);
+        await _dbContext.Orders.AddAsync(order);
+        await _dbContext.SaveChangesAsync();
+
+        return Result.Ok(createOrderCommand);
     }
 }

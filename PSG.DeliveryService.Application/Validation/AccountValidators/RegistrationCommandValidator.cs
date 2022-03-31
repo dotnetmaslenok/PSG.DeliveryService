@@ -9,7 +9,6 @@ public class RegistrationCommandValidator : AbstractValidator<RegistrationComman
 {
     public RegistrationCommandValidator()
     {
-        RuleFor(x => x.PhoneNumber).Matches(Regex.Escape(@"^[+][7]-[(]\d{3}[)][-]\d{3}[-]\d{2}-\d{2}"));
         RuleFor(x => x.Password).SetValidator(new PasswordValidator<RegistrationCommand>()!);
         RuleFor(x => x.ConfirmedPassword).Equal(x => x.Password);
     }

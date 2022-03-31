@@ -14,10 +14,9 @@ namespace PSG.DeliveryService.Domain.Entities
 
 		public DateTime OrderTime { get; set; }
 
-		public decimal ProductPrice { get; set; }
+		public decimal TotalPrice { get; set; }
 
-		public decimal DeliveryPrice { get; set; }
-
+		public double Distance { get; set; }
 		public string? DeliveryAddress { get; set; }
 
 		public string? ProductAddress { get; set; }
@@ -28,11 +27,11 @@ namespace PSG.DeliveryService.Domain.Entities
 		
 		public OrderState OrderState { get; set; }
 
-		public Guid CustomerId { get; set; }
+		public Guid? CustomerId { get; set; }
 
 		public ApplicationUser? Customer { get; set; }
 
-		public Guid CourierId { get; set; }
+		public Guid? CourierId { get; set; }
 
 		public ApplicationUser? Courier { get; set; }
 	}

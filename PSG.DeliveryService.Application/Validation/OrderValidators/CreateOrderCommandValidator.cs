@@ -8,8 +8,8 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 {
     public CreateOrderCommandValidator()
     {
-        RuleFor(x => x.To).MaximumLength(127).NotEqual(x => x.From);
-        RuleFor(x => x.From).MaximumLength(127);
+        RuleFor(x => x.DeliveryAddress).MaximumLength(127).NotEqual(x => x.ProductAddress);
+        RuleFor(x => x.ProductAddress).MaximumLength(127);
         RuleFor(x => x.OrderTime).SetValidator(new OrderTimeValidator<CreateOrderCommand>()!);
         RuleFor(x => x.ProductName).MaximumLength(63);
     }

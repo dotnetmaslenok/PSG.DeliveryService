@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace PSG.DeliveryService.Application.Authentication;
+namespace PSG.DeliveryService.Application.Helpers;
 
-public static class BearerAuthentication
+public static class AuthenticationHelper
 {
     public static string SetBearerToken(IdentityUser<Guid> user, IEnumerable<Claim> claims, IConfiguration configuration)
     {

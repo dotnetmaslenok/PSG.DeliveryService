@@ -11,6 +11,12 @@ public static class CustomConstants
         public const string WrongPasswordMessage = "Wrong password";
     }
 
+    public static class DeliveryPriceDependencies
+    {
+        public const int FastDeliveryMultiplier = 2;
+        public const int PricePerKm = 150;
+    }
+    
     public static class UserClaims
     {
         public static readonly Claim ClientClaim = new Claim(ClaimTypes.Role, "Client");

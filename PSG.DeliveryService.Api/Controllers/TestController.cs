@@ -11,6 +11,6 @@ public class TestController : ControllerBase
     [Authorize(Policy = "Client")]
     public IActionResult GetString([FromQuery(Name = "s")] string content)
     {
-        return Ok(Results.Json(content));
+        return Ok(content);
     }
 }

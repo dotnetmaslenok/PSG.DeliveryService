@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PSG.DeliveryService.Application.Commands;
-using PSG.DeliveryService.Application.Responses;
+using PSG.DeliveryService.Application.Queries;
 
 namespace PSG.DeliveryService.Api.Controllers;
 
@@ -16,19 +16,24 @@ public class OrderController : ControllerBase
 	{
 		_mediator = mediator;
 	}
-
-	[Authorize]
+	
 	[HttpGet]
-	public async Task<IActionResult> GetOrderByIdAsync([FromQuery(Name = "o")] int orderId)
+	[Authorize]
+	public async Task<IActionResult> GetOrderByIdAsync([FromQuery(Name = "o")] OrderQuery orderQuery)
 	{
-		//TODO mediator query
-		var result = await _mediator.Send(orderId);
-		return Ok(Task.FromResult(new OrderResponse()).Result);
+		var result = await _mediator.Send(orderQuery);
+
+		if (result.Value is not null)
+		{
+			return Ok(result.Value);
+		}
+
+		return NotFound();
 	}
 	
-	[Authorize(Policy = "Client")]
 	[HttpPost]
-	public async Task<IActionResult> CreateOrder([FromForm] CreateOrderCommand createOrderCommand)
+	[Authorize(Policy="Client")]
+	public async Task<IActionResult> CreateOrderAsync([FromForm] CreateOrderCommand createOrderCommand)
 	{ 
 		var result = await _mediator.Send(createOrderCommand);
 
@@ -38,6 +43,6 @@ public class OrderController : ControllerBase
 			return CreatedAtAction(actionName, new {Id = result.Value.ClientId}, result.Value);
 		}
 
-		return BadRequest(Results.Json(result.Error));
+		return BadRequest(result);
 	}
 }
