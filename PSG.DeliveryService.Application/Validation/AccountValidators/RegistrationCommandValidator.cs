@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using FluentValidation;
+﻿using FluentValidation;
 using PSG.DeliveryService.Application.Commands;
 using PSG.DeliveryService.Application.Validation.BaseValidators;
 

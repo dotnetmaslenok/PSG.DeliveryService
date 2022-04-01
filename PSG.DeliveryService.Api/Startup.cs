@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PSG.DeliveryService.Application.Interfaces;
@@ -14,8 +13,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using PSG.DeliveryService.Application.Commands;
-using PSG.DeliveryService.Application.Common;
 using PSG.DeliveryService.Application.PipelineBehaviors;
 using PSG.DeliveryService.Application.Profiles;
 
@@ -93,10 +90,10 @@ public class Startup
                     .Build();
             });
 
-            config.AddPolicy("Administrator",
+            config.AddPolicy("OrderManager",
                 policy =>
                 {
-                    policy.RequireAssertion(x => x.User.HasClaim(ClaimTypes.Role, "Administrator"));
+                    policy.RequireAssertion(x => x.User.HasClaim(ClaimTypes.Role, "OrderManager"));
                 });
 
             config.AddPolicy("Courier",

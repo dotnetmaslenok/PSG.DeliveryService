@@ -25,8 +25,61 @@ public class MappingProfile : Profile
             .ForAllOtherMembers(opt => opt.Ignore());
 
         CreateMap<Order, OrderResponse>()
+            .ForMember(x => x.Id,
+                opt => opt.MapFrom(x => x.Id))
+            .ForMember(x => x.ProductName,
+                opt => opt.MapFrom(x => x.ProductName))
             .ForMember(x => x.OrderType,
-                opt => opt.MapFrom(x => x.OrderType.ToString()));
+                opt => opt.MapFrom(x => x.OrderType.ToString()))
+            .ForMember(x => x.OrderTime,
+                opt => opt.MapFrom(x => x.OrderTime))
+            .ForMember(x => x.TotalPrice,
+                opt => opt.MapFrom(x => x.TotalPrice))
+            .ForMember(x => x.DeliveryAddress,
+                opt => opt.MapFrom(x => x.DeliveryAddress))
+            .ForMember(x => x.ProductAddress,
+                opt => opt.MapFrom(x => x.ProductAddress))
+            .ForMember(x => x.Distance,
+                opt => opt.MapFrom(x => x.Distance))
+            .ForMember(x => x.OrderWeight,
+                opt =>
+                {
+                    opt.PreCondition(x =>
+                        int.TryParse(new string(x.OrderWeight.ToString().Where(char.IsDigit).ToArray()), out _));
+                    opt.MapFrom(x => int.Parse(new string(x.OrderWeight.ToString().Where(char.IsDigit).ToArray())));
+                })
+            .ForMember(x => x.DeliveryType,
+                opt => opt.MapFrom(x => x.DeliveryType.ToString()))
+            .ForMember(x => x.OrderState,
+                opt => opt.MapFrom(x => x.OrderState.ToString()))
+            .ForMember(x => x.CustomerId,
+                opt => opt.MapFrom(x => x.CustomerId))
+            .ForMember(x => x.CourierId,
+                opt => opt.MapFrom(x => x.CourierId))
+            .ForMember(x => x.CustomerPhoneNumber,
+                opt =>
+                {
+                    opt.PreCondition(x => x.Customer is not null);
+                    opt.MapFrom(x => x.Customer!.PhoneNumber);
+                })
+            .ForMember(x => x.CourierPhoneNumber,
+                opt =>
+                {
+                    opt.PreCondition(x => x.Courier is not null);
+                    opt.MapFrom(x => x.Courier!.PhoneNumber);
+                })
+            .ForAllOtherMembers(opt => opt.Ignore());
+
+        CreateMap<ApplicationUser, UserResponse>()
+            .ForMember(x => x.Id,
+                opt => opt.MapFrom(x => x.Id))
+            .ForMember(x => x.IsCourier,
+                opt => opt.MapFrom(x => x.IsCourier))
+            .ForMember(x => x.OrdersCount, opt =>
+                opt.MapFrom(x => x.IsCourier ? x.CourierOrders!.Count : x.CustomerOrders!.Count))
+            .ForMember(x => x.PhoneNumber,
+                opt => opt.MapFrom(x => x.PhoneNumber))
+            .ForAllOtherMembers(opt => opt.Ignore());
 
         CreateMap<CreateOrderCommand, Order>()
             .ForMember(x => x.Id,
@@ -51,7 +104,7 @@ public class MappingProfile : Profile
             .ForMember(x => x.Distance, opt =>
             {
                 opt.PreCondition(x => !string.IsNullOrEmpty(x.Distance));
-                opt.PreCondition(x => double.TryParse(x.Distance, out double _));
+                opt.PreCondition(x => double.TryParse(x.Distance, out _));
                 opt.MapFrom(x => double.Parse(x.Distance!));
             })
             .ForMember(x => x.DeliveryAddress,

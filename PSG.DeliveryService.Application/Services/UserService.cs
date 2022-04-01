@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PSG.DeliveryService.Application.Interfaces;
+using PSG.DeliveryService.Application.Queries;
 using PSG.DeliveryService.Application.Responses;
 using PSG.DeliveryService.Infrastructure.Database;
 using ResultMonad;
@@ -18,9 +19,9 @@ public class UserService : IUserService
         _mapper = mapper;
     }
     
-    public async Task<Result<UserResponse>> GetUserByIdAsync(Guid userId)
+    public async Task<Result<UserResponse>> GetUserByIdAsync(UserQuery userQuery)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == userQuery.Id);
 
         if (user is null)
         {

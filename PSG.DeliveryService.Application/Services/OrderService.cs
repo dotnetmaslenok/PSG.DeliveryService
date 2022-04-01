@@ -24,8 +24,11 @@ public class OrderService : IOrderService
     
     public async Task<Result<OrderResponse>> GetOrderByIdAsync(OrderQuery orderQuery)
     {
-        var order = await _dbContext.Orders.FirstOrDefaultAsync(x => x.Id == orderQuery.Id);
-
+        var order = await _dbContext.Orders
+            .Include(x => x.Customer)
+            .Include(x => x.Courier)
+            .FirstOrDefaultAsync(x => x.Id == orderQuery.Id);
+        
         if (order is null)
         {
             return Result.Fail<OrderResponse>();
@@ -46,7 +49,7 @@ public class OrderService : IOrderService
         
         var order = _mapper.Map<Order>(createOrderCommand);
         order.Customer = customer;
-        customer.CustomerOrders.Add(order);
+        customer.CustomerOrders!.Add(order);
         
         var deliveryPrice = DeliveryPriceHelper.CalculateDeliveryPrice(order.OrderType, order.Distance, order.OrderWeight);
 

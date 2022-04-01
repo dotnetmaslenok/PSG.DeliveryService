@@ -19,8 +19,9 @@ public class OrderController : ControllerBase
 	
 	[HttpGet]
 	[Authorize]
-	public async Task<IActionResult> GetOrderByIdAsync([FromQuery(Name = "o")] OrderQuery orderQuery)
+	public async Task<IActionResult> GetOrderByIdAsync([FromQuery(Name = "o")] Guid orderId)
 	{
+		var orderQuery = new OrderQuery(orderId);
 		var result = await _mediator.Send(orderQuery);
 
 		if (result.Value is not null)

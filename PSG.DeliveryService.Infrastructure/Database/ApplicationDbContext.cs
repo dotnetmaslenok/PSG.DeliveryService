@@ -15,14 +15,22 @@ namespace PSG.DeliveryService.Infrastructure.Database
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
-			builder.Entity<Order>()
-				.HasKey(x => x.Id);
+			builder.Entity<ApplicationUser>()
+				.Property(x => x.UserRegistrationTime)
+				.HasDefaultValue(DateTime.Now);
 
 			builder.Entity<ApplicationUser>()
 				.HasKey(x => x.Id);
 
 			builder.Entity<ApplicationRole>()
 				.HasKey(x => x.Id);
+			
+			builder.Entity<Order>()
+				.HasKey(x => x.Id);
+
+			builder.Entity<Order>()
+				.Property(x => x.OrderTime)
+				.HasDefaultValue(DateTime.Now.AddMinutes(30));
 
 			builder.Entity<Order>()
 				.HasOne(x => x.Customer)

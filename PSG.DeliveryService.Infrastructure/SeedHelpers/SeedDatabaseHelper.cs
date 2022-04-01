@@ -19,15 +19,16 @@ public static class SeedDatabaseHelper
 
             var clientClaim = new Claim(ClaimTypes.Role, "Client");
             var courierClaim = new Claim(ClaimTypes.Role, "Courier");
+            var orderManagerClaim = new Claim(ClaimTypes.Role, "OrderManager");
             
             var client = new ApplicationUser()
             {
-                UserName = "HaterJS228",
-                Email = "a.kudryavcev0812@bk.ru",
-                PhoneNumber = "+7-906-614-32-73",
+                UserName = "ClientUserName",
+                PhoneNumber = "+7-(111)-111-11-11",
+                PhoneNumberConfirmed = true
             };
 
-            var clientResult = await userManager.CreateAsync(client, "PasswordHaterJs228");
+            var clientResult = await userManager.CreateAsync(client, "ClientPassword111");
 
             if (clientResult.Succeeded)
             {
@@ -36,16 +37,30 @@ public static class SeedDatabaseHelper
 
             var courier = new ApplicationUser()
             {
-                UserName = "JSEnjoyer2004",
-                Email = "ebanatik@mail.ru",
-                PhoneNumber = "+7-904-123-42-32"
+                UserName = "CourierUserName",
+                PhoneNumber = "+7-(222)-222-22-22",
+                PhoneNumberConfirmed = true
             };
 
-            var courierResult = await userManager.CreateAsync(courier, "PasswordJSEnjoyer2004");
+            var courierResult = await userManager.CreateAsync(courier, "CourierPassword222");
 
             if (courierResult.Succeeded)
             {
                 await userManager.AddClaimAsync(courier, courierClaim);
+            }
+
+            var orderManager = new ApplicationUser()
+            {
+                UserName = "OrderManagerUserName",
+                PhoneNumber = "+7-(333)-333-33-33",
+                PhoneNumberConfirmed = true
+            };
+
+            var orderManagerResult = await userManager.CreateAsync(orderManager, "OrderManagerPassword333");
+
+            if (orderManagerResult.Succeeded)
+            {
+                await userManager.AddClaimAsync(orderManager, orderManagerClaim);
             }
         }
     }

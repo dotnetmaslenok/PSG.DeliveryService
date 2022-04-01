@@ -4,4 +4,4 @@ using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Queries;
 
-public record OrderQuery(Guid Id) : IRequest<Result<OrderResponse>>;
+public record UserQuery(Guid Id) : IRequest<Result<UserResponse>>;
