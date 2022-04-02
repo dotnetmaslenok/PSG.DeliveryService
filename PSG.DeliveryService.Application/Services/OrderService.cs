@@ -38,13 +38,13 @@ public class OrderService : IOrderService
         return Result.Ok(orderResponse);
     }
     
-    public async Task<Result<CreateOrderCommand>> CreateOrderAsync(CreateOrderCommand createOrderCommand)
+    public async Task<Result<OrderResponse>> CreateOrderAsync(CreateOrderCommand createOrderCommand)
     {
-        var customer = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == createOrderCommand.ClientId);
+        var customer = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == GuidConverter.Decode(createOrderCommand.ClientId!));
 
         if (customer is null)
         {
-            return Result.Fail<CreateOrderCommand>();
+            return Result.Fail<OrderResponse>();
         }
         
         var order = _mapper.Map<Order>(createOrderCommand);
@@ -61,6 +61,8 @@ public class OrderService : IOrderService
         await _dbContext.Orders.AddAsync(order);
         await _dbContext.SaveChangesAsync();
 
-        return Result.Ok(createOrderCommand);
+        var orderResponse = _mapper.Map<OrderResponse>(order);
+
+        return Result.Ok(orderResponse);
     }
 }

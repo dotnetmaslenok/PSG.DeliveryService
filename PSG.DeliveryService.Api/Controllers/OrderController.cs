@@ -19,7 +19,7 @@ public class OrderController : ControllerBase
 	
 	[HttpGet]
 	[Authorize]
-	public async Task<IActionResult> GetOrderByIdAsync([FromQuery(Name = "o")] Guid orderId)
+	public async Task<IActionResult> GetOrderByIdAsync([FromQuery(Name = "o")] string orderId)
 	{
 		var orderQuery = new OrderQuery(orderId);
 		var result = await _mediator.Send(orderQuery);
@@ -40,10 +40,9 @@ public class OrderController : ControllerBase
 
 		if (result.IsSuccess)
 		{
-			var actionName = nameof(GetOrderByIdAsync);
-			return CreatedAtAction(actionName, new {Id = result.Value.ClientId}, result.Value);
+			return Created(Request.Path, result);
 		}
 
-		return BadRequest(result);
+		return BadRequest(result.Value);
 	}
 }

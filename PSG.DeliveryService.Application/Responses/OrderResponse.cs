@@ -2,7 +2,7 @@
 
 public class OrderResponse
 {
-    public Guid Id { get; set; }
+    public string? Id { get; set; }
     
     public string? ProductName { get; set; }
 
@@ -24,11 +24,11 @@ public class OrderResponse
 
     public string? OrderState { get; set; }
 
-    public Guid? CustomerId { get; set; }
+    public string? CustomerId { get; set; }
 
     public string? CustomerPhoneNumber { get; set; }
 
-    public Guid? CourierId { get; set; }
+    public string? CourierId { get; set; }
 
     public string? CourierPhoneNumber { get; set; }
 }

@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using MediatR;
+using PSG.DeliveryService.Application.Responses;
 using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Commands;
 
-public class CreateOrderCommand : IRequest<Result<CreateOrderCommand>>
+public class CreateOrderCommand : IRequest<Result<OrderResponse>>
 {
     [Required]
-    public Guid ClientId { get; set; }  
+    public string? ClientId { get; set; }  
     
     [Required(ErrorMessage = "Fast or scheduled delivery?")]
     public string? OrderType { get; set; }

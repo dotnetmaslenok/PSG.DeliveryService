@@ -21,7 +21,10 @@ public class UserService : IUserService
     
     public async Task<Result<UserResponse>> GetUserByIdAsync(UserQuery userQuery)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == userQuery.Id);
+        var user = await _dbContext.Users
+            .Include(x => x.CourierOrders)
+            .Include(x => x.CustomerOrders)
+            .FirstOrDefaultAsync(x => x.Id == userQuery.Id);
 
         if (user is null)
         {

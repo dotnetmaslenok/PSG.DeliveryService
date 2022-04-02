@@ -54,10 +54,11 @@ public class AccountService : IAccountService
                 var token = AuthenticationHelper.SetBearerToken(user, new[] {userClaim}, _configuration);
                 
                 var userId = await _userManager.GetUserIdAsync((user as ApplicationUser)!);
+                
                 var response = new
                 {
                     access_token = token,
-                    currentUserId = userId
+                    currentUserId = GuidConverter.Encode(Guid.Parse(userId))
                 };
                 
                 return Result.Ok<JsonResult, IEnumerable<IdentityError>>(new JsonResult(response));  
@@ -131,10 +132,11 @@ public class AccountService : IAccountService
                 var token = AuthenticationHelper.SetBearerToken(user, claims, _configuration);
                 
                 var userId = await _userManager.GetUserIdAsync(user);
+                
                 var response = new
                 {
                     access_token = token,
-                    currentUserId = userId
+                    currentUserId = GuidConverter.Encode(Guid.Parse(userId))
                 };
                 
 

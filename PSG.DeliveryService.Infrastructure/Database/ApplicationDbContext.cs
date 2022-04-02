@@ -46,7 +46,7 @@ namespace PSG.DeliveryService.Infrastructure.Database
 
 			builder.Entity<Order>()
 				.Property(x => x.TotalPrice)
-				.HasPrecision(8, 2);
+				.HasPrecision(10, 2);
 
 			base.OnModelCreating(builder);
 		}

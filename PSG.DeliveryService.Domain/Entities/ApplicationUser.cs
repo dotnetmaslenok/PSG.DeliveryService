@@ -7,6 +7,7 @@ namespace PSG.DeliveryService.Domain.Entities
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public override Guid Id { get; set; }
+		
 		public DateTime UserRegistrationTime { get; set; }
 
 		public List<Order>? CustomerOrders { get; set; }

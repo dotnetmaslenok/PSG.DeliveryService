@@ -12,7 +12,7 @@ using PSG.DeliveryService.Infrastructure.Database;
 namespace PSG.DeliveryService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220401171152_SetDefaultTimeValues")]
+    [Migration("20220402114821_SetDefaultTimeValues")]
     partial class SetDefaultTimeValues
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -214,7 +214,7 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
                     b.Property<DateTime>("UserRegistrationTime")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 4, 1, 20, 11, 52, 785, DateTimeKind.Local).AddTicks(2157));
+                        .HasDefaultValue(new DateTime(2022, 4, 2, 14, 48, 21, 685, DateTimeKind.Local).AddTicks(4961));
 
                     b.HasKey("Id");
 
@@ -256,7 +256,7 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
                     b.Property<DateTime>("OrderTime")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 4, 1, 20, 41, 52, 785, DateTimeKind.Local).AddTicks(3118));
+                        .HasDefaultValue(new DateTime(2022, 4, 2, 15, 18, 21, 685, DateTimeKind.Local).AddTicks(6065));
 
                     b.Property<int>("OrderType")
                         .HasColumnType("int");

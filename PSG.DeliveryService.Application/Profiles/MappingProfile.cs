@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using PSG.DeliveryService.Application.Commands;
+using PSG.DeliveryService.Application.Helpers;
 using PSG.DeliveryService.Application.Responses;
 using PSG.DeliveryService.Domain.Entities;
 
@@ -26,7 +27,7 @@ public class MappingProfile : Profile
 
         CreateMap<Order, OrderResponse>()
             .ForMember(x => x.Id,
-                opt => opt.MapFrom(x => x.Id))
+                opt => opt.MapFrom(x => GuidConverter.Encode(x.Id)))
             .ForMember(x => x.ProductName,
                 opt => opt.MapFrom(x => x.ProductName))
             .ForMember(x => x.OrderType,
@@ -53,9 +54,17 @@ public class MappingProfile : Profile
             .ForMember(x => x.OrderState,
                 opt => opt.MapFrom(x => x.OrderState.ToString()))
             .ForMember(x => x.CustomerId,
-                opt => opt.MapFrom(x => x.CustomerId))
+                opt =>
+                {
+                    opt.PreCondition(x => x.CustomerId.HasValue);
+                    opt.MapFrom(x => GuidConverter.Encode(x.CustomerId));
+                })
             .ForMember(x => x.CourierId,
-                opt => opt.MapFrom(x => x.CourierId))
+                opt =>
+                {
+                    opt.PreCondition(x => x.CourierId.HasValue);
+                    opt.MapFrom(x => GuidConverter.Encode(x.CourierId));
+                })
             .ForMember(x => x.CustomerPhoneNumber,
                 opt =>
                 {
@@ -72,18 +81,18 @@ public class MappingProfile : Profile
 
         CreateMap<ApplicationUser, UserResponse>()
             .ForMember(x => x.Id,
-                opt => opt.MapFrom(x => x.Id))
+                opt => opt.MapFrom(x => GuidConverter.Encode(x.Id)))
             .ForMember(x => x.IsCourier,
                 opt => opt.MapFrom(x => x.IsCourier))
             .ForMember(x => x.OrdersCount, opt =>
                 opt.MapFrom(x => x.IsCourier ? x.CourierOrders!.Count : x.CustomerOrders!.Count))
             .ForMember(x => x.PhoneNumber,
                 opt => opt.MapFrom(x => x.PhoneNumber))
+            .ForMember(x => x.UserRegistrationTime,
+                opt => opt.MapFrom(x => x.UserRegistrationTime))
             .ForAllOtherMembers(opt => opt.Ignore());
 
         CreateMap<CreateOrderCommand, Order>()
-            .ForMember(x => x.Id,
-                opt => opt.MapFrom(x => x.ClientId))
             .ForMember(x => x.OrderWeight,
                 opt =>
                 {

@@ -14,7 +14,7 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
                 table: "Orders",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(2022, 4, 1, 20, 41, 52, 785, DateTimeKind.Local).AddTicks(3118),
+                defaultValue: new DateTime(2022, 4, 2, 15, 18, 21, 685, DateTimeKind.Local).AddTicks(6065),
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2");
 
@@ -23,7 +23,7 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
                 table: "AspNetUsers",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(2022, 4, 1, 20, 11, 52, 785, DateTimeKind.Local).AddTicks(2157),
+                defaultValue: new DateTime(2022, 4, 2, 14, 48, 21, 685, DateTimeKind.Local).AddTicks(4961),
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2");
         }
@@ -37,7 +37,7 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
                 nullable: false,
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2",
-                oldDefaultValue: new DateTime(2022, 4, 1, 20, 41, 52, 785, DateTimeKind.Local).AddTicks(3118));
+                oldDefaultValue: new DateTime(2022, 4, 2, 15, 18, 21, 685, DateTimeKind.Local).AddTicks(6065));
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "UserRegistrationTime",
@@ -46,7 +46,7 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
                 nullable: false,
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2",
-                oldDefaultValue: new DateTime(2022, 4, 1, 20, 11, 52, 785, DateTimeKind.Local).AddTicks(2157));
+                oldDefaultValue: new DateTime(2022, 4, 2, 14, 48, 21, 685, DateTimeKind.Local).AddTicks(4961));
         }
     }
 }

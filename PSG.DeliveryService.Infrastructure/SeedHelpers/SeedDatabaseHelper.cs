@@ -39,7 +39,8 @@ public static class SeedDatabaseHelper
             {
                 UserName = "CourierUserName",
                 PhoneNumber = "+7-(222)-222-22-22",
-                PhoneNumberConfirmed = true
+                PhoneNumberConfirmed = true,
+                IsCourier = true
             };
 
             var courierResult = await userManager.CreateAsync(courier, "CourierPassword222");

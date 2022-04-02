@@ -9,5 +9,5 @@ public interface IOrderService
 {
     public Task<Result<OrderResponse>> GetOrderByIdAsync(OrderQuery orderQuery);
     
-    public Task<Result<CreateOrderCommand>> CreateOrderAsync(CreateOrderCommand createOrderCommand);
+    public Task<Result<OrderResponse>> CreateOrderAsync(CreateOrderCommand createOrderCommand);
 }
