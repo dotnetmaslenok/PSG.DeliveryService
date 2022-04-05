@@ -18,18 +18,18 @@ public class OrderController : ControllerBase
 	}
 	
 	[HttpGet]
-	[Authorize]
+	[Authorize("Bearer")]
 	public async Task<IActionResult> GetOrderByIdAsync([FromQuery(Name = "o")] string orderId)
 	{
 		var orderQuery = new OrderQuery(orderId);
 		var result = await _mediator.Send(orderQuery);
 
-		if (result.Value is not null)
+		if (result.Value is null)
 		{
-			return Ok(result.Value);
+			return NotFound();
 		}
-
-		return NotFound();
+		
+		return Ok(result.Value);
 	}
 	
 	[HttpPost]
@@ -38,11 +38,11 @@ public class OrderController : ControllerBase
 	{ 
 		var result = await _mediator.Send(createOrderCommand);
 
-		if (result.IsSuccess)
+		if (result.IsFailure)
 		{
-			return Created(Request.Path, result);
+			return BadRequest(result.Value);
 		}
-
-		return BadRequest(result.Value);
+		
+		return Created(Request.Path, result.Value);
 	}
 }

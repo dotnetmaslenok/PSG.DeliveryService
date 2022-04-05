@@ -35,6 +35,7 @@ public class OrderService : IOrderService
         }
 
         var orderResponse = _mapper.Map<OrderResponse>(order);
+        
         return Result.Ok(orderResponse);
     }
     

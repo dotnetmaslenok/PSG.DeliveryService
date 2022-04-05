@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PSG.DeliveryService.Application.Queries;
 
@@ -16,16 +17,17 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize("Bearer")]
     public async Task<IActionResult> GetUserByIdAsync([FromQuery(Name = "u")] string userId)
     {
         var userQuery = new UserQuery(userId);
         var result = await _mediator.Send(userQuery);
 
-        if (result.IsSuccess)
+        if (result.IsFailure)
         {
-            return Ok(result.Value);
+            return NotFound();
         }
-
-        return NotFound();
+        
+        return Ok(result.Value);
     }
 }

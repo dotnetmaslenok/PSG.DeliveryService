@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
+using PSG.DeliveryService.Application.Responses;
 using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Commands;
 
-public class SignInCommand : BaseAccountCommand, IRequest<Result<JsonResult, string>>
+public class SignInCommand : BaseAccountCommand, IRequest<Result<AuthenticationResponse, string>>
 {
     
 }

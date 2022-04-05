@@ -32,6 +32,7 @@ public class UserService : IUserService
         }
 
         var userResponse = _mapper.Map<UserResponse>(user);
+        
         return Result.Ok(userResponse);
     }
 }

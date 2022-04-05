@@ -23,12 +23,12 @@ public class AccountController : ControllerBase
     { 
         var result = await _mediator.Send(registrationCommand);
 
-        if (result.IsSuccess)
+        if (result.IsFailure)
         {
-            return Ok(result.Value);
+            return BadRequest(result.Error);
         }
         
-        return BadRequest(result.Error);
+        return Ok(result.Value);
     }
 
     [HttpPost("sign-in")]
@@ -36,12 +36,12 @@ public class AccountController : ControllerBase
     {
         var result = await _mediator.Send(signInCommand);
 
-        if (result.IsSuccess)
+        if (result.IsFailure)
         {
-            return Ok(result.Value);
+            return BadRequest(result.Error);
         }
-
-        return BadRequest(result.Error);
+        
+        return Ok(result.Value);
     }
     
     [HttpPost("sign-out")]
