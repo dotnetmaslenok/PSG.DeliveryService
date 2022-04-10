@@ -3,7 +3,7 @@ using FluentValidation.Validators;
 
 namespace PSG.DeliveryService.Application.Validation.BaseValidators;
 
-public class OrderTimeValidator<T> : PropertyValidator<T, string?>
+public sealed class OrderTimeValidator<T> : PropertyValidator<T, string?>
 {
     public override bool IsValid(ValidationContext<T> context, string? value)
     {

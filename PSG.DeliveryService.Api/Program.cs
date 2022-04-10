@@ -2,7 +2,7 @@ using PSG.DeliveryService.Infrastructure.SeedHelpers;
 
 namespace  PSG.DeliveryService.Api;
 
-public class Program
+public sealed class Program
 {
     public static async Task Main(string[] args)
     {

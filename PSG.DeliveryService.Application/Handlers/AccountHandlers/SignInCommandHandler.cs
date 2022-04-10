@@ -6,7 +6,7 @@ using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Handlers.AccountHandlers;
 
-public class SignInCommandHandler : IRequestHandler<SignInCommand, Result<AuthenticationResponse, string>>
+public sealed class SignInCommandHandler : IRequestHandler<SignInCommand, Result<AuthenticationResponse, string>>
 {
     private readonly IAccountService _accountService;
     

@@ -6,17 +6,17 @@ using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Handlers.UserHandlers;
 
-public class UserQueryHandler : IRequestHandler<UserQuery, Result<UserResponse>>
+public sealed class UserQueryHandler : IRequestHandler<UserQuery, Result<UserResponse>>
 {
-    private readonly IUserService _userService;
+    private readonly ICustomerService _customerService;
     
-    public UserQueryHandler(IUserService userService)
+    public UserQueryHandler(ICustomerService customerService)
     {
-        _userService = userService;
+        _customerService = customerService;
     }
     
     public async Task<Result<UserResponse>> Handle(UserQuery userQuery, CancellationToken cancellationToken)
     {
-        return await _userService.GetUserByIdAsync(userQuery);
+        return await _customerService.GetByIdAsync(userQuery);
     }
 }

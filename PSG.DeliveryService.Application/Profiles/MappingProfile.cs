@@ -6,7 +6,7 @@ using PSG.DeliveryService.Domain.Entities;
 
 namespace PSG.DeliveryService.Application.Profiles;
 
-public class MappingProfile : Profile
+public sealed class MappingProfile : Profile
 {
     public MappingProfile()
     {

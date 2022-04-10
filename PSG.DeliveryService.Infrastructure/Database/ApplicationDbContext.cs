@@ -4,7 +4,7 @@ using PSG.DeliveryService.Domain.Entities;
 
 namespace PSG.DeliveryService.Infrastructure.Database
 {
-	public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
+	public sealed class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
 	{
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
 		{

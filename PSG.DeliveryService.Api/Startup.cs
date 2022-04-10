@@ -18,7 +18,7 @@ using PSG.DeliveryService.Application.Profiles;
 
 namespace PSG.DeliveryService.Api;
 
-public class Startup
+public sealed class Startup
 {
     public IConfiguration Configuration { get; set; }
 
@@ -134,7 +134,7 @@ public class Startup
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<ICourierService, CourierService>();
         services.AddScoped<IOrderService, OrderService>();
-        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ICustomerService, CustomerService>();
 
         services.AddMediatR(typeof(ValidationBehavior<,>));
         services.AddFluentValidation(config =>

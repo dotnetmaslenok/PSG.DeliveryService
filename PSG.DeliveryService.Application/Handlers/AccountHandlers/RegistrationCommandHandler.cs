@@ -7,7 +7,7 @@ using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Handlers.AccountHandlers;
 
-public class RegistrationCommandHandler : IRequestHandler<RegistrationCommand, Result<AuthenticationResponse, IEnumerable<IdentityError>>>
+public sealed class RegistrationCommandHandler : IRequestHandler<RegistrationCommand, Result<AuthenticationResponse, IEnumerable<IdentityError>>>
 {
     private readonly IAccountService _accountService;
     
@@ -18,6 +18,6 @@ public class RegistrationCommandHandler : IRequestHandler<RegistrationCommand, R
     
     public async Task<Result<AuthenticationResponse, IEnumerable<IdentityError>>> Handle(RegistrationCommand registrationCommand, CancellationToken cancellationToken)
     {
-        return await _accountService.CreateAsync(registrationCommand);
+        return await _accountService.RegisterAsync(registrationCommand);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace PSG.DeliveryService.Application.Services;
 
-public class CourierService : ICourierService
+public sealed class CourierService : ICourierService
 {
     
 }

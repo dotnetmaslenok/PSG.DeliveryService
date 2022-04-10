@@ -4,7 +4,7 @@ using PSG.DeliveryService.Application.Validation.BaseValidators;
 
 namespace PSG.DeliveryService.Application.Validation.OrderValidators;
 
-public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
+public sealed class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 {
     public CreateOrderCommandValidator()
     {

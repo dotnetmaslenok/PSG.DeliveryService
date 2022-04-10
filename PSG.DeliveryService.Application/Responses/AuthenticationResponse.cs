@@ -1,6 +1,6 @@
 ﻿namespace PSG.DeliveryService.Application.Responses;
 
-public class AuthenticationResponse
+public sealed class AuthenticationResponse
 {
     public string? UserId { get; set; }
 

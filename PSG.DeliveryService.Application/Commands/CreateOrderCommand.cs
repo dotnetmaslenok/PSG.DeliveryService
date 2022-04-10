@@ -5,7 +5,7 @@ using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Commands;
 
-public class CreateOrderCommand : IRequest<Result<OrderResponse>>
+public sealed class CreateOrderCommand : IRequest<Result<OrderResponse>>
 {
     [Required]
     public string? ClientId { get; set; }  

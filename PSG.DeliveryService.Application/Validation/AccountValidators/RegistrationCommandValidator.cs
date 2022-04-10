@@ -4,7 +4,7 @@ using PSG.DeliveryService.Application.Validation.BaseValidators;
 
 namespace PSG.DeliveryService.Application.Validation.AccountValidators;
 
-public class RegistrationCommandValidator : AbstractValidator<RegistrationCommand>
+public sealed class RegistrationCommandValidator : AbstractValidator<RegistrationCommand>
 {
     public RegistrationCommandValidator()
     {

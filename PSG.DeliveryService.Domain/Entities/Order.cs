@@ -3,7 +3,7 @@ using PSG.DeliveryService.Domain.Enums;
 
 namespace PSG.DeliveryService.Domain.Entities
 {
-	public class Order
+	public sealed class Order
 	{
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public Guid Id { get; set; }

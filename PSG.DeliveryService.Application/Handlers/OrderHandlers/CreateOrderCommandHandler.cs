@@ -6,7 +6,7 @@ using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Handlers.OrderHandlers;
 
-public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Result<OrderResponse>>
+public sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Result<OrderResponse>>
 {
     private readonly IOrderService _orderService;
     
@@ -17,6 +17,6 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Res
     
     public async Task<Result<OrderResponse>> Handle(CreateOrderCommand createOrderCommand, CancellationToken cancellationToken)
     {
-        return await _orderService.CreateOrderAsync(createOrderCommand);
+        return await _orderService.CreateAsync(createOrderCommand);
     }
 }

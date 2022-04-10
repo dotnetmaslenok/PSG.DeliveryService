@@ -4,7 +4,7 @@ using PSG.DeliveryService.Application.Validation.BaseValidators;
 
 namespace PSG.DeliveryService.Application.Validation.AccountValidators;
 
-public class SignInCommandValidator : AbstractValidator<SignInCommand>
+public sealed class SignInCommandValidator : AbstractValidator<SignInCommand>
 {
     public SignInCommandValidator()
     {

@@ -4,7 +4,7 @@ using FluentValidation.Validators;
 
 namespace PSG.DeliveryService.Application.Validation.BaseValidators;
 
-public class PasswordValidator<T> : PropertyValidator<T,string>
+public sealed class PasswordValidator<T> : PropertyValidator<T,string>
 {
     private const int MinLength = 8;
     private const int MaxLength = 31;

@@ -14,7 +14,7 @@ using static PSG.DeliveryService.Application.Common.CustomConstants;
 
 namespace PSG.DeliveryService.Application.Services;
 
-public class AccountService : IAccountService
+public sealed class AccountService : IAccountService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -39,7 +39,7 @@ public class AccountService : IAccountService
         SignInManager<TUser> signInManager,
         TUser user,
         Claim userClaim,
-        string? password) where TUser : IdentityUser<Guid>
+        string? password) where TUser : ApplicationUser
     {
         var result = await userManager.CreateAsync(user, password);
 
@@ -63,8 +63,7 @@ public class AccountService : IAccountService
         }
         
         var token = AuthenticationHelper.SetBearerToken(user, new[] {userClaim}, _configuration);
-                
-        var userId = await _userManager.GetUserIdAsync((user as ApplicationUser)!);
+        var userId = await _userManager.GetUserIdAsync(user);
 
         var response = new AuthenticationResponse()
         {
@@ -75,7 +74,7 @@ public class AccountService : IAccountService
         return Result.Ok<AuthenticationResponse, IEnumerable<IdentityError>>(response);
     }
 
-    public async Task<Result<AuthenticationResponse, IEnumerable<IdentityError>>> CreateAsync(RegistrationCommand registrationCommand)
+    public async Task<Result<AuthenticationResponse, IEnumerable<IdentityError>>> RegisterAsync(RegistrationCommand registrationCommand)
     {
         var isAlreadyExists = await _dbContext.Users.AnyAsync(x => x.PhoneNumber == registrationCommand.PhoneNumber);
 
@@ -94,6 +93,7 @@ public class AccountService : IAccountService
             var client = _mapper.Map<RegistrationCommand, ApplicationUser>(registrationCommand);
 
             var clientClaim = UserClaims.ClientClaim;
+            
             return await CreateUserAsync(_userManager,
                 _signInManager,
                 client,
@@ -104,6 +104,7 @@ public class AccountService : IAccountService
         var courier = _mapper.Map<RegistrationCommand, ApplicationUser>(registrationCommand);
 
         var courierClaim = UserClaims.CourierClaim;
+        
         return await CreateUserAsync(_userManager,
             _signInManager,
             courier,
@@ -135,7 +136,6 @@ public class AccountService : IAccountService
         };
 
         var token = AuthenticationHelper.SetBearerToken(user, claims, _configuration);
-                
         var userId = await _userManager.GetUserIdAsync(user);
 
         var response = new AuthenticationResponse()
@@ -145,6 +145,5 @@ public class AccountService : IAccountService
         };
 
         return Result.Ok<AuthenticationResponse, string>(response);
-
     }
 }

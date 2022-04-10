@@ -7,7 +7,7 @@ namespace PSG.DeliveryService.Api.Controllers;
 
 [ApiController]
 [Route("api/user")]
-public class UserController : ControllerBase
+public sealed class UserController : ControllerBase
 {
     private readonly IMediator _mediator;
 
@@ -18,7 +18,7 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Authorize("Bearer")]
-    public async Task<IActionResult> GetUserByIdAsync([FromQuery(Name = "u")] string userId)
+    public async Task<IActionResult> GetByIdAsync([FromQuery(Name = "u")] string userId)
     {
         var userQuery = new UserQuery(userId);
         var result = await _mediator.Send(userQuery);

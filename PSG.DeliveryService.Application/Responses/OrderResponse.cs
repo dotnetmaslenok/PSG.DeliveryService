@@ -1,6 +1,6 @@
 ﻿namespace PSG.DeliveryService.Application.Responses;
 
-public class OrderResponse
+public sealed class OrderResponse
 {
     public string? Id { get; set; }
     

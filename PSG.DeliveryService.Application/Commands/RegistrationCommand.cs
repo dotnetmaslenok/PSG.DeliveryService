@@ -6,7 +6,7 @@ using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Commands;
 
-public class RegistrationCommand : BaseAccountCommand, IRequest<Result<AuthenticationResponse, IEnumerable<IdentityError>>>
+public sealed class RegistrationCommand : BaseAccountCommand, IRequest<Result<AuthenticationResponse, IEnumerable<IdentityError>>>
 {
     [Required(ErrorMessage = "Confirm password is required field")]
     public string? ConfirmedPassword { get; set; }

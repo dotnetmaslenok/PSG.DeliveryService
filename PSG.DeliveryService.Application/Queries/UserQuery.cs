@@ -5,7 +5,7 @@ using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Queries;
 
-public class UserQuery : IRequest<Result<UserResponse>>
+public sealed class UserQuery : IRequest<Result<UserResponse>>
 {
     public Guid Id { get; set; }
     public UserQuery(string id)

@@ -7,7 +7,7 @@ namespace PSG.DeliveryService.Application.Interfaces;
 
 public interface IAccountService
 {
-    public Task<Result<AuthenticationResponse, IEnumerable<IdentityError>>> CreateAsync(RegistrationCommand registrationRequest);
+    public Task<Result<AuthenticationResponse, IEnumerable<IdentityError>>> RegisterAsync(RegistrationCommand registrationRequest);
     
-    public Task<Result<AuthenticationResponse ,string>> SignInAsync(SignInCommand signInCommand);
+    public Task<Result<AuthenticationResponse, string>> SignInAsync(SignInCommand signInCommand);
 }

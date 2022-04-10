@@ -4,7 +4,7 @@ using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Interfaces;
 
-public interface IUserService
+public interface ICustomerService
 {
-    public Task<Result<UserResponse>> GetUserByIdAsync(UserQuery userQuery);
+    public Task<Result<UserResponse>> GetByIdAsync(UserQuery userQuery);
 }

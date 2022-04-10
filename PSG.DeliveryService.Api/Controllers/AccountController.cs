@@ -9,7 +9,7 @@ namespace PSG.DeliveryService.Api.Controllers;
 
 [ApiController]
 [Route("api/account")]
-public class AccountController : ControllerBase
+public sealed class AccountController : ControllerBase
 {
     private readonly IMediator _mediator;
 
@@ -19,7 +19,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> SignUpAsync([FromForm]RegistrationCommand registrationCommand)
+    public async Task<IActionResult> RegisterAsync([FromForm]RegistrationCommand registrationCommand)
     { 
         var result = await _mediator.Send(registrationCommand);
 

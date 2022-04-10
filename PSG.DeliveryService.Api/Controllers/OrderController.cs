@@ -8,7 +8,7 @@ namespace PSG.DeliveryService.Api.Controllers;
 
 [ApiController]
 [Route("api/order")]
-public class OrderController : ControllerBase
+public sealed class OrderController : ControllerBase
 {
 	private readonly IMediator _mediator;
 
@@ -19,7 +19,7 @@ public class OrderController : ControllerBase
 	
 	[HttpGet]
 	[Authorize("Bearer")]
-	public async Task<IActionResult> GetOrderByIdAsync([FromQuery(Name = "o")] string orderId)
+	public async Task<IActionResult> GetByIdAsync([FromQuery(Name = "o")] string orderId)
 	{
 		var orderQuery = new OrderQuery(orderId);
 		var result = await _mediator.Send(orderQuery);
@@ -34,7 +34,7 @@ public class OrderController : ControllerBase
 	
 	[HttpPost]
 	[Authorize(Policy="Client")]
-	public async Task<IActionResult> CreateOrderAsync([FromForm] CreateOrderCommand createOrderCommand)
+	public async Task<IActionResult> CreateAsync([FromForm] CreateOrderCommand createOrderCommand)
 	{ 
 		var result = await _mediator.Send(createOrderCommand);
 

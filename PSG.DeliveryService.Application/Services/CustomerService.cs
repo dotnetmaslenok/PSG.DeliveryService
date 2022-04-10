@@ -8,18 +8,18 @@ using ResultMonad;
 
 namespace PSG.DeliveryService.Application.Services;
 
-public class UserService : IUserService
+public sealed class CustomerService : ICustomerService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
 
-    public UserService(ApplicationDbContext dbContext, IMapper mapper)
+    public CustomerService(ApplicationDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
         _mapper = mapper;
     }
     
-    public async Task<Result<UserResponse>> GetUserByIdAsync(UserQuery userQuery)
+    public async Task<Result<UserResponse>> GetByIdAsync(UserQuery userQuery)
     {
         var user = await _dbContext.Users
             .Include(x => x.CourierOrders)
@@ -31,8 +31,6 @@ public class UserService : IUserService
             return Result.Fail<UserResponse>();
         }
 
-        var userResponse = _mapper.Map<UserResponse>(user);
-        
-        return Result.Ok(userResponse);
+        return Result.Ok(_mapper.Map<UserResponse>(user));
     }
 }
