@@ -1,0 +1,37 @@
+version: '3.8'
+
+networks:
+  ds_network:
+    name: ds_newtork
+    driver: bridge
+
+services:
+  ds_postgres:
+    container_name: ds_postgres
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ds_postgres
+      POSTGRES_PASSWORD: ds_postgres
+      POSTGRES_DB: ds_postgres
+    volumes:
+      - ds_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      ds_network:
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ds_email@admin.com
+      PGADMIN_DEFAULT_PASSWORD: ds_postgres
+    ports:
+      - "8080:80"
+    networks:
+      ds_network:
+
+volumes:
+  ds_postgres_data:

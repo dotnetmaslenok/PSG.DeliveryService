@@ -1,12 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PSG.DeliveryService.Application.Queries;
+using PSG.DeliveryService.Application.Queries.UserQueries;
 
 namespace PSG.DeliveryService.Api.Controllers;
 
 [ApiController]
-[Route("api/user")]
+[Route("api/users")]
 public sealed class UserController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -16,12 +16,12 @@ public sealed class UserController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet]
+    [HttpGet("{userId}")]
     [Authorize("Bearer")]
-    public async Task<IActionResult> GetByIdAsync([FromQuery(Name = "u")] string userId)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] string userId)
     {
-        var userQuery = new UserQuery(userId);
-        var result = await _mediator.Send(userQuery);
+        var query = new GetOneUserQuery(userId);
+        var result = await _mediator.Send(query);
 
         if (result.IsFailure)
         {

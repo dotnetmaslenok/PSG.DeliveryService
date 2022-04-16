@@ -1,19 +1,22 @@
+using Microsoft.EntityFrameworkCore;
+using PSG.DeliveryService.Domain.Entities;
+using PSG.DeliveryService.Infrastructure.Database;
 using PSG.DeliveryService.Infrastructure.SeedHelpers;
 
 namespace  PSG.DeliveryService.Api;
 
 public sealed class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         var host = CreateHostBuilder(args).Build();
 
-        await using (var scope = host.Services.CreateAsyncScope())
-        {
-            await SeedDatabaseHelper.SeedDatabaseAsync(scope.ServiceProvider);
-        }
+        // await using (var scope = host.Services.CreateAsyncScope())
+        // {
+        //     await scope.ServiceProvider.MigrateAsync();
+        // }
         
-        await host.RunAsync();
+        host.Run();
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args)

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PSG.DeliveryService.Application.Interfaces;
-using PSG.DeliveryService.Application.Queries;
+using PSG.DeliveryService.Application.Queries.UserQueries;
 using PSG.DeliveryService.Application.Responses;
 using PSG.DeliveryService.Infrastructure.Database;
 using ResultMonad;
@@ -19,12 +19,12 @@ public sealed class CustomerService : ICustomerService
         _mapper = mapper;
     }
     
-    public async Task<Result<UserResponse>> GetByIdAsync(UserQuery userQuery)
+    public async Task<Result<UserResponse>> GetByIdAsync(GetOneUserQuery getOneUserQuery)
     {
         var user = await _dbContext.Users
             .Include(x => x.CourierOrders)
             .Include(x => x.CustomerOrders)
-            .FirstOrDefaultAsync(x => x.Id == userQuery.Id);
+            .FirstOrDefaultAsync(x => x.Id == getOneUserQuery.Id);
 
         if (user is null)
         {

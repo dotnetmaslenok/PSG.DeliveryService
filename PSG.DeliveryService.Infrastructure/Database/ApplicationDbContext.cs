@@ -17,7 +17,7 @@ namespace PSG.DeliveryService.Infrastructure.Database
 		{
 			builder.Entity<ApplicationUser>()
 				.Property(x => x.UserRegistrationTime)
-				.HasDefaultValue(DateTime.Now);
+				.HasDefaultValue(DateTime.UtcNow);
 
 			builder.Entity<ApplicationUser>()
 				.HasKey(x => x.Id);
@@ -30,7 +30,7 @@ namespace PSG.DeliveryService.Infrastructure.Database
 
 			builder.Entity<Order>()
 				.Property(x => x.OrderTime)
-				.HasDefaultValue(DateTime.Now.AddMinutes(30));
+				.HasDefaultValue(DateTime.UtcNow.AddMinutes(30));
 
 			builder.Entity<Order>()
 				.HasOne(x => x.Customer)

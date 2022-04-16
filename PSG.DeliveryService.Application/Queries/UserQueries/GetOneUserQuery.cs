@@ -3,12 +3,12 @@ using PSG.DeliveryService.Application.Helpers;
 using PSG.DeliveryService.Application.Responses;
 using ResultMonad;
 
-namespace PSG.DeliveryService.Application.Queries;
+namespace PSG.DeliveryService.Application.Queries.UserQueries;
 
-public sealed class OrderQuery : IRequest<Result<OrderResponse>>
+public sealed class GetOneUserQuery : IRequest<Result<UserResponse>>
 {
     public Guid Id { get; set; }
-    public OrderQuery(string id)
+    public GetOneUserQuery(string id)
     {
         Id = GuidConverter.Decode(id);
     }

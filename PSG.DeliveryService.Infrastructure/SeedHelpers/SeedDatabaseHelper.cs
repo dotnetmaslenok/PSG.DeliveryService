@@ -9,10 +9,8 @@ namespace PSG.DeliveryService.Infrastructure.SeedHelpers;
 
 public static class SeedDatabaseHelper
 {
-    public static async Task SeedDatabaseAsync(IServiceProvider serviceProvider)
+    public static async Task SeedDatabaseAsync(this ApplicationDbContext dbContext, IServiceProvider serviceProvider)
     {
-        var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
-        
         if (!await dbContext.Users.AnyAsync())
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();

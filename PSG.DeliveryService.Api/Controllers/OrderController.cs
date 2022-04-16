@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PSG.DeliveryService.Application.Commands;
-using PSG.DeliveryService.Application.Queries;
+using PSG.DeliveryService.Application.Queries.OrderQueries;
 
 namespace PSG.DeliveryService.Api.Controllers;
 
 [ApiController]
-[Route("api/order")]
+[Route("api/orders")]
 public sealed class OrderController : ControllerBase
 {
 	private readonly IMediator _mediator;
@@ -17,12 +17,12 @@ public sealed class OrderController : ControllerBase
 		_mediator = mediator;
 	}
 	
-	[HttpGet]
+	[HttpGet("{orderId}")]
 	[Authorize("Bearer")]
-	public async Task<IActionResult> GetByIdAsync([FromQuery(Name = "o")] string orderId)
+	public async Task<IActionResult> GetByIdAsync([FromRoute] string orderId)
 	{
-		var orderQuery = new OrderQuery(orderId);
-		var result = await _mediator.Send(orderQuery);
+		var query = new GetOneOrderQuery(orderId);
+		var result = await _mediator.Send(query);
 
 		if (result.Value is null)
 		{
@@ -30,6 +30,14 @@ public sealed class OrderController : ControllerBase
 		}
 		
 		return Ok(result.Value);
+	}
+
+	[HttpGet]
+	[Authorize("Bearer")]
+	public async Task<IActionResult> GetAll()
+	{
+		var query = new GetManyOrderQuery();
+		return Ok(await _mediator.Send(query));
 	}
 	
 	[HttpPost]

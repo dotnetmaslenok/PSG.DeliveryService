@@ -40,7 +40,7 @@ public sealed class Startup
 
         services.AddDbContext<ApplicationDbContext>(config =>
         {
-            config.UseSqlServer(Configuration.GetConnectionString("DeliveryService"));
+            config.UseNpgsql(Configuration.GetConnectionString("DeliveryService"));
         });
 
         services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
@@ -64,7 +64,8 @@ public sealed class Startup
             .AddCookie(config => config.SlidingExpiration = true)
             .AddJwtBearer(config =>
             {
-                var secretKey = Configuration["BearerSalt"];
+                // var secretKey = Configuration["BearerSalt"];
+                var secretKey = "secret_key_for_json_web_token_generation";
                 var secretBytes = Encoding.UTF8.GetBytes(secretKey);
                 var key = new SymmetricSecurityKey(secretBytes);
 

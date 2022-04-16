@@ -16,7 +16,7 @@ public sealed class MappingProfile : Profile
             .ForMember(x => x.UserName,
                 opt => opt.MapFrom(x => new string(x.PhoneNumber!.Where(char.IsDigit).ToArray())))
             .ForMember(x => x.UserRegistrationTime,
-                opt => opt.MapFrom(x => DateTime.Now))
+                opt => opt.MapFrom(x => DateTime.UtcNow))
             .ForMember(x => x.PhoneNumber,
                 opt => opt.MapFrom(x => x.PhoneNumber))
             .ForMember(x => x.PhoneNumberConfirmed,
