@@ -14,10 +14,18 @@ services:
       POSTGRES_USER: ds_postgres
       POSTGRES_PASSWORD: ds_postgres
       POSTGRES_DB: ds_postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -h ds_postgres -p 5432 -d ds_postgres -U ds_postgres" ]
+      interval: 5s
+      timeout: 45s
+      retries: 5
+    depends_on:
+      pgadmin:
+        condition: service_started
     volumes:
       - ds_postgres_data:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "5432:5432"
     networks:
       ds_network:
 
@@ -33,5 +41,21 @@ services:
     networks:
       ds_network:
 
+  ds_api:
+    container_name: ds_api
+    image: ds_api
+    build:
+      context: .
+      dockerfile: PSG.DeliveryService.Api/Dockerfile
+    ports:
+      - "7070:70"
+    depends_on:
+      pgadmin:
+        condition: service_started
+      ds_postgres:
+        condition: service_healthy
+    networks:
+      ds_network:
+        
 volumes:
   ds_postgres_data:

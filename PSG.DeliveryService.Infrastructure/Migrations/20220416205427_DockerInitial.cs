@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace PSG.DeliveryService.Infrastructure.Migrations
 {
-    public partial class DockerInitialMigration : Migration
+    public partial class DockerInitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -29,7 +29,7 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserRegistrationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2022, 4, 16, 1, 30, 58, 771, DateTimeKind.Utc).AddTicks(4897)),
+                    UserRegistrationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2022, 4, 16, 20, 54, 27, 139, DateTimeKind.Utc).AddTicks(1862)),
                     IsCourier = table.Column<bool>(type: "boolean", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -164,7 +164,7 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ProductName = table.Column<string>(type: "text", nullable: true),
                     OrderType = table.Column<int>(type: "integer", nullable: false),
-                    OrderTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2022, 4, 16, 2, 0, 58, 771, DateTimeKind.Utc).AddTicks(7164)),
+                    OrderTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValue: new DateTime(2022, 4, 16, 21, 24, 27, 139, DateTimeKind.Utc).AddTicks(4335)),
                     TotalPrice = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
                     Distance = table.Column<double>(type: "double precision", nullable: false),
                     DeliveryAddress = table.Column<string>(type: "text", nullable: true),

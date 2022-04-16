@@ -12,8 +12,8 @@ using PSG.DeliveryService.Infrastructure.Database;
 namespace PSG.DeliveryService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220416013058_DockerInitialMigration")]
-    partial class DockerInitialMigration
+    [Migration("20220416205427_DockerInitial")]
+    partial class DockerInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -213,7 +213,7 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
                     b.Property<DateTime>("UserRegistrationTime")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2022, 4, 16, 1, 30, 58, 771, DateTimeKind.Utc).AddTicks(4897));
+                        .HasDefaultValue(new DateTime(2022, 4, 16, 20, 54, 27, 139, DateTimeKind.Utc).AddTicks(1862));
 
                     b.HasKey("Id");
 
@@ -254,7 +254,7 @@ namespace PSG.DeliveryService.Infrastructure.Migrations
                     b.Property<DateTime?>("OrderTime")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2022, 4, 16, 2, 0, 58, 771, DateTimeKind.Utc).AddTicks(7164));
+                        .HasDefaultValue(new DateTime(2022, 4, 16, 21, 24, 27, 139, DateTimeKind.Utc).AddTicks(4335));
 
                     b.Property<int>("OrderType")
                         .HasColumnType("integer");
