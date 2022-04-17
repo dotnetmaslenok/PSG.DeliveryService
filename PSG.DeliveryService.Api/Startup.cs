@@ -64,8 +64,8 @@ public sealed class Startup
             .AddCookie(config => config.SlidingExpiration = true)
             .AddJwtBearer(config =>
             {
-                // var secretKey = Configuration["BearerSalt"];
-                var secretKey = "secret_key_for_json_web_token_generation";
+                var secretKey = Configuration["BearerSalt"];
+                // var secretKey = "secret_key_for_json_web_token_generation";
                 var secretBytes = Encoding.UTF8.GetBytes(secretKey);
                 var key = new SymmetricSecurityKey(secretBytes);
 
@@ -149,12 +149,9 @@ public sealed class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        app.UseDeveloperExceptionPage();
+        app.UseSwagger();
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DeliveryService"));
 
         app.UseRouting();
 
@@ -166,7 +163,6 @@ public sealed class Startup
         });
 
         app.UseAuthentication();
-    
         app.UseAuthorization();
     
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

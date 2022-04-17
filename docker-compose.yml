@@ -1,6 +1,8 @@
 version: '3.8'
 
 networks:
+  default:
+    driver: overlay
   ds_network:
     name: ds_newtork
     driver: bridge
@@ -19,13 +21,13 @@ services:
       interval: 5s
       timeout: 45s
       retries: 5
-    depends_on:
-      pgadmin:
-        condition: service_started
     volumes:
       - ds_postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    depends_on:
+      pgadmin:
+        condition: service_started
     networks:
       ds_network:
 
@@ -37,18 +39,20 @@ services:
       PGADMIN_DEFAULT_EMAIL: ds_email@admin.com
       PGADMIN_DEFAULT_PASSWORD: ds_postgres
     ports:
-      - "8080:80"
+      - "8000:80"
     networks:
       ds_network:
 
   ds_api:
     container_name: ds_api
     image: ds_api
+    environment:
+      BearerSalt: /run/secrets/BearerSalt
     build:
       context: .
       dockerfile: PSG.DeliveryService.Api/Dockerfile
     ports:
-      - "7070:70"
+      - "8080:80"
     depends_on:
       pgadmin:
         condition: service_started
@@ -57,5 +61,8 @@ services:
     networks:
       ds_network:
         
+secrets:
+  BearerSalt:
+    external: true
 volumes:
   ds_postgres_data:
