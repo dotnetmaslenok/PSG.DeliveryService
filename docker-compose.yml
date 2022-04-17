@@ -1,8 +1,6 @@
 version: '3.8'
 
 networks:
-  default:
-    driver: overlay
   ds_network:
     name: ds_newtork
     driver: bridge

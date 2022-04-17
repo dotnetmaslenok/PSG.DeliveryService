@@ -65,7 +65,6 @@ public sealed class Startup
             .AddJwtBearer(config =>
             {
                 var secretKey = Configuration["BearerSalt"];
-                // var secretKey = "secret_key_for_json_web_token_generation";
                 var secretBytes = Encoding.UTF8.GetBytes(secretKey);
                 var key = new SymmetricSecurityKey(secretBytes);
 
